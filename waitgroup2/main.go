@@ -21,10 +21,6 @@ type Host struct {
 	Data      map[string]interface{}
 }
 
-type Inventory struct {
-	Hosts map[string]Host
-}
-
 func timeTrack(start time.Time) {
 	elapsed := time.Since(start)
 	fmt.Printf("This process took %s\n", elapsed)
@@ -71,12 +67,11 @@ func getVersion(h Host) {
 
 }
 
-func getInventory() Inventory {
+func getHosts() map[string]Host {
 
-	var inventory Inventory
 	devices := []string{"no.suchdomain","192.168.204.101","192.168.204.102","192.168.204.103","192.168.204.104"}
 
-	inventory.Hosts = make(map[string]Host)
+	hosts := make(map[string]Host)
 
 	for _,value := range devices {
 		var host Host
@@ -89,17 +84,17 @@ func getInventory() Inventory {
 		host.Password = "bedrock"
 		host.Data["example_only"] = 100
 
-		inventory.Hosts[host.Name] = host
+		hosts[host.Name] = host
 		
 	}
 
-	return inventory
+	return hosts
 }
 
-func chunker(inventory Inventory, num_workers int) [][]string {
-
-	keys := make([]string, 0, len(inventory.Hosts))
-    for k := range inventory.Hosts {
+func chunker(hosts map[string]Host, num_workers int) [][]string {
+	
+	keys := make([]string, 0, len(hosts))
+    for k := range hosts {
         keys = append(keys, k)
     }
 
@@ -126,13 +121,13 @@ func main() {
 	// To time this process
 	defer timeTrack(time.Now())
 
-	inventory := getInventory()
-	//fmt.Println(inventory)
+	hosts := getHosts()
+	//fmt.Println(hosts)
 
 	var wg sync.WaitGroup
 
 	//Note: Not ideal, but here we are using chunks to restrict the number of goroutines
-	chunks := chunker(inventory, 5)
+	chunks := chunker(hosts, 5)
 
 	for chunk := range chunks {
 
@@ -142,7 +137,7 @@ func main() {
 			go func(h Host) {
 				defer wg.Done()
 				getVersion(h)
-			}(inventory.Hosts[host_key])
+			}(hosts[host_key])
 		
 		}
 		wg.Wait()

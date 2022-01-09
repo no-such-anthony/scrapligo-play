@@ -21,9 +21,6 @@ type Host struct {
 	Data      map[string]interface{}
 }
 
-type Inventory struct {
-	Hosts map[string]Host
-}
 
 func timeTrack(start time.Time) {
 	elapsed := time.Since(start)
@@ -71,12 +68,11 @@ func getVersion(h Host) {
 
 }
 
-func getInventory() Inventory {
+func getHosts() map[string]Host {
 
-	var inventory Inventory
 	devices := []string{"no.suchdomain","192.168.204.101","192.168.204.102","192.168.204.103","192.168.204.104"}
 
-	inventory.Hosts = make(map[string]Host)
+	hosts := make(map[string]Host)
 
 	for _,value := range devices {
 		var host Host
@@ -89,11 +85,11 @@ func getInventory() Inventory {
 		host.Password = "bedrock"
 		host.Data["example_only"] = 100
 
-		inventory.Hosts[host.Name] = host
+		hosts[host.Name] = host
 		
 	}
 
-	return inventory
+	return hosts
 }
 
 
@@ -101,14 +97,14 @@ func main() {
 	// To time this process
 	defer timeTrack(time.Now())
 
-	inventory := getInventory()
-	//fmt.Println(inventory)
+	hosts := getHosts()
+	//fmt.Println(hosts)
 
 	var wg sync.WaitGroup
 
 	//Note: Nothing here to restrict the number of goroutines
 
-	for _, host := range inventory.Hosts {
+	for _, host := range hosts {
 		wg.Add(1)
 	
 		go func(h Host) {
