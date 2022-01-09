@@ -111,7 +111,7 @@ func main() {
 	//Let's try with just a simple done return channel before we try with a results return channel
 
 	const num_workers = 3
-    host_jobs := make(chan Host, 100)
+	host_jobs := make(chan Host, 100)
 	done := make(chan bool, 100)
 
 	for w := 1; w <= num_workers; w++ {
