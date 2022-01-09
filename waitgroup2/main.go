@@ -96,12 +96,12 @@ func getHosts() Hosts {
 
 func chunker(hosts map[string]Host, num_workers int) [][]string {
 	
-    keys := make([]string, 0, len(hosts))
-    for k := range hosts {
-        keys = append(keys, k)
-    }
+	keys := make([]string, 0, len(hosts))
+	for k := range hosts {
+    	keys = append(keys, k)
+	}
 
-    size := num_workers
+	size := num_workers
 	total := len(keys)
 	var chunks [][]string
 

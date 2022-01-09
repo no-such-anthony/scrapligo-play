@@ -116,12 +116,12 @@ func main() {
 
 	for w := 1; w <= num_workers; w++ {
 		go worker(host_jobs, done)
-    }
+	}
 
 	for _, host := range hosts {
-        host_jobs <- host
-    }
-    close(host_jobs)
+		host_jobs <- host
+	}
+	close(host_jobs)
 
 	for r := 1; r <= len(hosts); r++ {
 		<-done
