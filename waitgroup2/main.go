@@ -98,7 +98,7 @@ func chunker(hosts map[string]Host, num_workers int) [][]string {
 	
 	keys := make([]string, 0, len(hosts))
 	for k := range hosts {
-    	keys = append(keys, k)
+		keys = append(keys, k)
 	}
 
 	size := num_workers
