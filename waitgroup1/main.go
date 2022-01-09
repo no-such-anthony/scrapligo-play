@@ -21,6 +21,7 @@ type Host struct {
 	Data      map[string]interface{}
 }
 
+type Hosts map[string]Host
 
 func timeTrack(start time.Time) {
 	elapsed := time.Since(start)
@@ -68,11 +69,11 @@ func getVersion(h Host) {
 
 }
 
-func getHosts() map[string]Host {
+func getHosts() Hosts {
 
 	devices := []string{"no.suchdomain","192.168.204.101","192.168.204.102","192.168.204.103","192.168.204.104"}
 
-	hosts := make(map[string]Host)
+	hosts := make(Hosts)
 
 	for _,value := range devices {
 		var host Host
