@@ -1,0 +1,14 @@
+r0:
+  hostname: no.suchdomain
+
+r1:
+  hostname: 192.168.204.101
+  
+r2:
+  hostname: 192.168.204.102
+  
+r3:
+  hostname: 192.168.204.103
+  
+r4:
+  hostname: 192.168.204.104
