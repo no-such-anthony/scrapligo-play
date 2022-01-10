@@ -103,7 +103,7 @@ func main() {
 	var wg sync.WaitGroup
 
 	num_workers := 2
-    guard := make(chan bool, num_workers)
+	guard := make(chan bool, num_workers)
 
 	//Note: Combining Waitgroup with channels to restrict number of goroutines.
 
