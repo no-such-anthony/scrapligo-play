@@ -1,6 +1,5 @@
 package main
 
-// based on code found at https://github.com/PacktPublishing/Network-Automation-with-Go
 
 import (
 	"fmt"
@@ -129,7 +128,7 @@ func main() {
 
 	var wg sync.WaitGroup
 
-	//Note: Not ideal, but here we are using chunks to restrict the number of goroutines
+	//Waitgroup with chunks of data to restrict the number of goroutines.
 	chunks := chunker(hosts, 5)
 
 	for chunk := range chunks {

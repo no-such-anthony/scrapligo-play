@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	"time"
+	"sync"
 	"github.com/scrapli/scrapligo/driver/base"
 	"github.com/scrapli/scrapligo/driver/core"
 )
@@ -20,7 +21,6 @@ type Host struct {
 }
 
 type Hosts map[string]Host
-
 
 func timeTrack(start time.Time) {
 	elapsed := time.Since(start)
@@ -92,12 +92,6 @@ func getHosts() Hosts {
 	return hosts
 }
 
-func worker(host_jobs <-chan Host, done chan<- bool) {
-	for h := range host_jobs {
-		getVersion(h)
-		done <- true
-	}
-}
 
 func main() {
 	// To time this process
@@ -106,25 +100,25 @@ func main() {
 	hosts := getHosts()
 	//fmt.Println(hosts)
 
-	//In/Out buffered channels with a boolean 'done' channel for completion and num_workers.
+	var wg sync.WaitGroup
 
-	const num_workers = 3
-	host_jobs := make(chan Host, 100)
-	done := make(chan bool, 100)
+	num_workers := 2
+    guard := make(chan bool, num_workers)
 
-	//worker pools
-	for w := 1; w <= num_workers; w++ {
-		go worker(host_jobs, done)
-	}
+	//Note: Combining Waitgroup with channels to restrict number of goroutines.
 
 	for _, host := range hosts {
-		host_jobs <- host
-	}
-	close(host_jobs)
-
-	for r := 1; r <= len(hosts); r++ {
-		<-done
-	}
 	
+		guard <- true
+		wg.Add(1)
+	
+		go func(h Host) {
+			defer wg.Done()
+			getVersion(h)
+			<-guard
+		}(host)
+    
+	}
+	wg.Wait()
 
 }

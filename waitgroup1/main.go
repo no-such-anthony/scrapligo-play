@@ -1,6 +1,5 @@
 package main
 
-// based on code found at https://github.com/PacktPublishing/Network-Automation-with-Go
 
 import (
 	"fmt"
@@ -40,26 +39,26 @@ func getVersion(h Host) {
 	)
 
 	if err != nil {
-		fmt.Printf("failed to create driver for %s: %+v\n", h.Hostname, err)
+		fmt.Printf("failed to create driver for %s: %+v\n\n", h.Hostname, err)
 		return
 	}
 
 	err = d.Open()
 	if err != nil {
-		fmt.Printf("failed to open driver for %s: %+v\n", h.Hostname, err)
+		fmt.Printf("failed to open driver for %s: %+v\n\n", h.Hostname, err)
 		return
 	}
 	defer d.Close()
 
 	rs, err := d.SendCommand("show version")
 	if err != nil {
-		fmt.Printf("failed to send command for %s: %+v\n", h.Hostname, err)
+		fmt.Printf("failed to send command for %s: %+v\n\n", h.Hostname, err)
 		return
 	}
 
 	parsedOut, err := rs.TextFsmParse("../textfsm_templates/" + h.Platform + "_show_version.textfsm")
 	if err != nil {
-		fmt.Printf("failed to parse command for %s: %+v\n", h.Hostname, err)
+		fmt.Printf("failed to parse command for %s: %+v\n\n", h.Hostname, err)
 		return
 	}
 
@@ -103,7 +102,7 @@ func main() {
 
 	var wg sync.WaitGroup
 
-	//Note: Nothing here to restrict the number of goroutines
+	//Waitgroup with nothing to limit number of goroutines.
 
 	for _, host := range hosts {
 		wg.Add(1)
