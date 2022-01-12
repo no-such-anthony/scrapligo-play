@@ -118,10 +118,10 @@ func main() {
 	hosts := getHosts()
 	//fmt.Println(hosts)
 
-	//In/Out buffered channels with a results returned channel and num_workers.
+	// In/Out buffered channels with a results returned channel and num_workers.
 	const num_workers = 5
-	host_jobs := make(chan Host, 100)
-	host_results := make(chan map[string]interface{}, 100)
+	host_jobs := make(chan Host, len(hosts))	// room to drop all hosts into the channel at once.
+	host_results := make(chan map[string]interface{}, len(hosts)) // make sure enough buffer or could end up with deadlock.
 	agg_results := make(map[string]interface{})
 
 	//worker pools
