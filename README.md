@@ -9,3 +9,4 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 - waitgroup3 - Waitgroup with channel to restrict number of goroutines.
 - workerpool1 - In/Out buffered channels with a boolean 'done' channel for completion and num_workers.
 - workerpool2 - In/Out buffered channels with a results returned channel and num_workers.
+- workerpool3 - workerpool2 with connection function and pointers (work in progress)
