@@ -109,8 +109,8 @@ func main() {
 	//In/Out buffered channels with a boolean 'done' channel for completion and num_workers.
 
 	const num_workers = 3
-	host_jobs := make(chan Host, 100)
-	done := make(chan bool, 100)
+	host_jobs := make(chan Host, len(hosts))
+	done := make(chan bool, len(hosts))
 
 	//worker pools
 	for w := 1; w <= num_workers; w++ {

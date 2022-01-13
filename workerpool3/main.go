@@ -21,7 +21,7 @@ type Host struct {
 	Data      map[string]interface{}
 }
 
-type Hosts map[string]Host
+type Hosts map[string]*Host
 
 
 func timeTrack(start time.Time) {
@@ -78,6 +78,9 @@ func getVersion(h Host, conn *network.Driver) map[string]interface{} {
 		return result
 	}
 
+	// update host data if we want
+	h.Data["SW version"] = parsedOut[0]["VERSION"]
+
 	result["result"] = parsedOut[0]
 
 	return result
@@ -100,7 +103,7 @@ func getHosts() Hosts {
 		host.Password = "bedrock"
 		host.Data["example_only"] = 100
 
-		hosts[host.Name] = host
+		hosts[host.Name] = &host
 		
 	}
 
@@ -145,7 +148,7 @@ func main() {
 	}
 
 	for _, host := range hosts {
-		host_jobs <- host
+		host_jobs <- *host
 	}
 	close(host_jobs)
 
@@ -178,4 +181,11 @@ func main() {
 		}
 	}
 	
+	//verify host Data updated...
+	fmt.Println("\n\n")
+	fmt.Println("And lastly verify host data was updated during goroutines.\n")
+	for _, host := range hosts {
+		fmt.Println(host.Data)
+	}
+	fmt.Println("\n\n")
 }
