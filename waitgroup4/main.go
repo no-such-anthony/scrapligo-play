@@ -4,7 +4,9 @@ package main
 import (
 	"fmt"
 	"time"
+	"golang.org/x/sync/semaphore"
 	"sync"
+	"context"
 	"github.com/scrapli/scrapligo/driver/base"
 	"github.com/scrapli/scrapligo/driver/core"
 )
@@ -103,22 +105,24 @@ func main() {
 	var wg sync.WaitGroup
 
 	num_workers := 2
-	guard := make(chan bool, num_workers)
+	var sem = semaphore.NewWeighted(int64(num_workers))
 
-	//Note: Combining Waitgroup with a channel to restrict number of goroutines.
+	// a context is required for the weighted semaphore pkg.
+	ctx := context.TODO()
+
+	//Note: Combining Waitgroup with a semaphore to restrict number of goroutines.
 
 	for _, host := range hosts {
-	
-		guard <- true
+
 		wg.Add(1)
-	
+		sem.Acquire(ctx, 1)
+
 		go func(h Host) {
+			defer sem.Release(1)
 			defer wg.Done()
-			getVersion(h)
-			<-guard
+			getVersion(h)	
 		}(host)
     
 	}
 	wg.Wait()
-
 }
