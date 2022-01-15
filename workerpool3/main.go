@@ -125,6 +125,7 @@ func worker(host_jobs <-chan Host, host_results chan<- map[string]interface{}) {
 			result := getVersion(h, conn)
 			host_results <- result
 		}
+		conn.Close()
 		
 	}
 }
