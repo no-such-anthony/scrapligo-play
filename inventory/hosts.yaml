@@ -1,0 +1,22 @@
+r1:
+  hostname: 192.168.204.101
+  data:
+    model: WS-C3560CX-12PD-S
+  groups:
+    - group1
+r2:
+  hostname: 192.168.204.102
+  data:
+    model: FreddySwitch
+  groups:
+    - group1
+r3:
+  hostname: 192.168.204.103
+  groups:
+    - group2
+  data:
+    model: DummyModel
+r4:
+  hostname: 192.168.204.104
+  groups:
+    - group3
