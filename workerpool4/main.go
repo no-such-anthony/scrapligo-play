@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"io/ioutil"
 	"gopkg.in/yaml.v2"
+	"strings"
 )
 
 type Host struct {
@@ -34,7 +35,6 @@ func getVersion(h Host, conn *network.Driver) map[string]interface{} {
 	result["name"] = h.Name
 
 	c := conn
-	defer c.Close()
 
 	rs, err := c.SendCommand("show version")
 	if err != nil {
@@ -102,9 +102,14 @@ func main() {
 	hosts := getHostsbyYAML()
 
 	// Filtering methods via regex, F_include and F_exclude, examples
-	//hosts = F_include(hosts, "groups", []string{"group2"})
-	//hosts = F_include(hosts, "model", []string{"C35"})
+	//hosts = F_include(hosts, "name", []string{"r"})
+	//hosts = F_include(hosts, "hostname", []string{"192.168"})
+	//hosts = F_include(hosts, "platform", []string{"group2"})
+	//hosts = F_exclude(hosts, "groups", []string{"group2"})
+	//hosts = F_exclude(hosts, "model", []string{"C35"})  // <- from data map
 	//fmt.Println(hosts)
+
+	// TODO: if no hosts after filter then exit 
 
 	// In/Out buffered channels with a results returned channel and num_workers.
 	const num_workers = 5
@@ -162,9 +167,20 @@ func main() {
 
 func F_include(i Hosts, loc string, includes []string) Hosts {
 
+	loc = strings.ToLower(loc)
+	if loc == "username" || loc == "password" || loc == "enable" || loc == "strictkey" {
+		fmt.Println("I am not programmed to filter on " + loc + ".\n")
+	}
+
 	for _, f_value := range includes {
 		r := regexp.MustCompile(f_value)
 		switch loc {
+		case "name":
+			for h,v := range i {
+				if !r.Match([]byte(v.Name)) {
+					delete(i,h)
+				}
+			}
 		case "hostname":
 			for h,v := range i {
 				if !r.Match([]byte(v.Hostname)) {
@@ -213,9 +229,17 @@ func F_include(i Hosts, loc string, includes []string) Hosts {
 
 func F_exclude(i Hosts, loc string, includes []string) Hosts {
 
+	loc = strings.ToLower(loc)
+
 	for _, f_value := range includes {
 		r := regexp.MustCompile(f_value)
 		switch loc {
+		case "name":
+			for h,v := range i {
+				if r.Match([]byte(v.Name)) {
+					delete(i,h)
+				}
+			}
 		case "hostname":
 			for h,v := range i {
 				if r.Match([]byte(v.Hostname)) {
@@ -269,6 +293,7 @@ func getConnection(h Host) (*network.Driver, error) {
 		base.WithAuthStrictKey(h.StrictKey),
 		base.WithAuthUsername(h.Username),
 		base.WithAuthPassword(h.Password),
+		//base.WithAuthSecondary(h.Enable),
 		//base.WithTransportType("standard"),
 		//base.WithSSHConfigFile("ssh_config"),
 	)

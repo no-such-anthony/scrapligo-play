@@ -37,6 +37,7 @@ func getConnection(h Host) (*network.Driver, error) {
 		base.WithAuthStrictKey(h.StrictKey),
 		base.WithAuthUsername(h.Username),
 		base.WithAuthPassword(h.Password),
+		//base.WithAuthSecondary(h.Enable),
 		//base.WithTransportType("standard"),
 		//base.WithSSHConfigFile("ssh_config"),
 	)
@@ -62,7 +63,6 @@ func getVersion(h Host, conn *network.Driver) map[string]interface{} {
 	result["name"] = h.Name
 
 	c := conn
-	defer c.Close()
 
 	rs, err := c.SendCommand("show version")
 	if err != nil {
