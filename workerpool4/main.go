@@ -254,7 +254,6 @@ func F_include(i Hosts, loc string, includes []string) Hosts {
 			}
 		}
 	}
-	fmt.Println(hostMatches)
 
 	for h := range(i) {
 		if !hostMatches[h] {
