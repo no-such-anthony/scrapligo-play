@@ -12,6 +12,8 @@ import (
 	"io/ioutil"
 	"gopkg.in/yaml.v2"
 	"strings"
+	"os"
+	"strconv"
 )
 
 type Host struct {
@@ -101,15 +103,22 @@ func main() {
 
 	hosts := getHostsbyYAML()
 
-	// Filtering methods via regex, F_include and F_exclude, examples
-	//hosts = F_include(hosts, "name", []string{"r"})
+	// Filtering methods via regex slice, F_include and F_exclude, examples
+	//hosts = F_include(hosts, "name", []string{"r1","r2"})
+	//hosts = F_include(hosts, "name", []string{"r1|r2"})
 	//hosts = F_include(hosts, "hostname", []string{"192.168"})
 	//hosts = F_include(hosts, "platform", []string{"group2"})
-	//hosts = F_exclude(hosts, "groups", []string{"group2"})
-	//hosts = F_exclude(hosts, "model", []string{"C35"})  // <- from data map
+	//hosts = F_include(hosts, "groups", []string{"group2","group3"})
+	//hosts = F_include(hosts, "model", []string{"C35|Dumm"})  // <- from data map
+	//hosts = F_include(hosts, "a_number", []string{"5"})  // <- from data map
+	//hosts = F_exclude(hosts, "a_role", []string{"stuff2"})  // <- from data map
 	//fmt.Println(hosts)
 
-	// TODO: if no hosts after filter then exit 
+	// If no hosts then exit
+	if len(hosts) == 0 {
+		fmt.Println("No hosts.  Nothing to do.")
+		os.Exit(0)
+	}
 
 	// In/Out buffered channels with a results returned channel and num_workers.
 	const num_workers = 5
@@ -172,25 +181,28 @@ func F_include(i Hosts, loc string, includes []string) Hosts {
 		fmt.Println("I am not programmed to filter on " + loc + ".\n")
 	}
 
+	//make a set to hold matches
+	hostMatches := make(map[string]bool)
+
 	for _, f_value := range includes {
 		r := regexp.MustCompile(f_value)
 		switch loc {
 		case "name":
 			for h,v := range i {
-				if !r.Match([]byte(v.Name)) {
-					delete(i,h)
+				if r.Match([]byte(v.Name)) {
+					hostMatches[h] = true
 				}
 			}
 		case "hostname":
 			for h,v := range i {
-				if !r.Match([]byte(v.Hostname)) {
-					delete(i,h)
+				if r.Match([]byte(v.Hostname)) {
+					hostMatches[h] = true
 				}
 			}
 		case "platform":
 			for h,v := range i {
-				if !r.Match([]byte(v.Platform)) {
-					delete(i,h)
+				if r.Match([]byte(v.Platform)) {
+					hostMatches[h] = true
 				}
 			}
 		case "groups":
@@ -202,34 +214,63 @@ func F_include(i Hosts, loc string, includes []string) Hosts {
 						break
 					}
 				}
-				if !f {
-					delete(i,h)
+				if f {
+					hostMatches[h] = true
 				}
 			}
 		default:
 			for h,v := range i {
-				switch v.Data[loc].(type) {
+				switch x := v.Data[loc].(type) {
 				case nil:
 					//when the data key doesn't exist
-					delete(i,h)
 				case string:
-					if !r.Match([]byte(v.Data[loc].(string))) {
-						delete(i,h)
+					if r.Match([]byte(v.Data[loc].(string))) {
+						hostMatches[h] = true
 					}
-				case []string:
-					//TODO
+				case int:
+					if r.Match([]byte(strconv.Itoa(v.Data[loc].(int)))) {
+						hostMatches[h] = true
+					}
+				case []interface {}:
+					for h,v := range i {
+						f := false
+						if _, ok := v.Data[loc]; ok {
+							for _, g := range v.Data[loc].([]interface{}) {
+								if r.Match([]byte(g.(string))) {
+									f = true
+									break
+								}
+							}
+						}
+						if f {
+							hostMatches[h] = true
+						}
+					}
 				default:
 					//TODO
+					fmt.Printf("I don't know how to filter on type %T\n", x)
+					os.Exit(0)
 				} 
 			}
 		}
 	}
+	fmt.Println(hostMatches)
+
+	for h := range(i) {
+		if !hostMatches[h] {
+			delete(i, h)
+		}
+	}
+
 	return i
 }
 
 func F_exclude(i Hosts, loc string, includes []string) Hosts {
 
 	loc = strings.ToLower(loc)
+	if loc == "username" || loc == "password" || loc == "enable" || loc == "strictkey" {
+		fmt.Println("I am not programmed to filter on " + loc + ".\n")
+	}
 
 	for _, f_value := range includes {
 		r := regexp.MustCompile(f_value)
@@ -267,17 +308,36 @@ func F_exclude(i Hosts, loc string, includes []string) Hosts {
 			}
 		default:
 			for h,v := range i {
-				switch v.Data[loc].(type) {
+				switch x:= v.Data[loc].(type) {
 				case nil:
 					//we don't care if the data key doesn't exist
 				case string:
 					if r.Match([]byte(v.Data[loc].(string))) {
 						delete(i,h)
 					}
-				case []string:
-					//TODO
+				case int:
+					if r.Match([]byte(strconv.Itoa(v.Data[loc].(int)))) {
+						delete(i,h)
+					}
+				case []interface {}:
+					for h,v := range i {
+						f := false
+						if _, ok := v.Data[loc]; ok {
+							for _, g := range v.Data[loc].([]interface{}) {
+								if r.Match([]byte(g.(string))) {
+									f = true
+									break
+								}
+							}
+						}
+						if f {
+							delete(i,h)
+						}
+					}
 				default:
 					//TODO
+					fmt.Printf("I don't know how to filter on type %T\n", x)
+					os.Exit(0)
 				} 
 			}
 		}
