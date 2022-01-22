@@ -7,8 +7,9 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 - waitgroup1 - Waitgroup with nothing to limit number of goroutines.
 - waitgroup2 - Waitgroup with chunks of data to restrict the number of goroutines.
 - waitgroup3 - Waitgroup with channel to restrict number of goroutines.
+- waitgroup3a - Added returning results
 - waitgroup4 - Waitgroup with semaphore to restrict number of goroutines.
 - workerpool1 - In/Out buffered channels with a boolean 'done' channel for completion.
 - workerpool2 - In/Out buffered channels with a results returned channel.
-- workerpool3 - add connection function and host pointers.
-- workerpool4 - add yaml inventory, filter, and write config to file. (work in progress)
+- workerpool2a - add connection function and host pointers.
+- workerpool2b - add yaml inventory, filter, and write config to file. (work in progress)
