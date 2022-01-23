@@ -54,7 +54,7 @@ func runTasks(h Host) (string, error) {
 
 	c, err := getConnection(h)
 	if err != nil {
-		return "", err
+		return err.Error(), err
 	} else {
 		// put all your tasks here
 		res, err = getVersion(h, c)
@@ -96,6 +96,7 @@ func runner(hosts Hosts) map[string]string {
 	guard := make(chan bool, num_workers)
 	results := make(map[string]string)
 	wg.Add(len(hosts))
+	mux := &sync.Mutex{}
 	//Combining Waitgroup with a channel to restrict number of goroutines.
 
 	for _, host := range hosts {
@@ -107,10 +108,10 @@ func runner(hosts Hosts) map[string]string {
 			//Print errors immediately but collate results for printing later.
 			if err != nil {
 				fmt.Println(err.Error())
-				results[h.Name] = err.Error()
-			} else {
-				results[h.Name] = res
 			}
+			mux.Lock()
+			results[h.Name] = res
+			mux.Unlock()
 			<-guard
 		}(host)
     
