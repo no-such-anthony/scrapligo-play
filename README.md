@@ -9,6 +9,7 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 - waitgroup3 - Waitgroup with channel to restrict number of goroutines.
 - waitgroup3a - Added returning results
 - waitgroup3b - Restructure into functions (work in progress)
+- waitgroup3c - Added an attempt at a simple playbook/runbook/taskbook in code example
 - waitgroup4 - Waitgroup with semaphore to restrict number of goroutines.
 - workerpool1 - In/Out buffered channels with a boolean 'done' channel for completion.
 - workerpool2 - In/Out buffered channels with a results returned channel.
