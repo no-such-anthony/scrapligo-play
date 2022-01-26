@@ -15,3 +15,4 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 - workerpool2 - In/Out buffered channels with a results returned channel.
 - workerpool2a - add connection function and host pointers.
 - workerpool2b - add yaml inventory, filter, and write config to file.
+- workerpool3 - waitgroup/(in)channel workerpool combo, storing results in the host pointer
