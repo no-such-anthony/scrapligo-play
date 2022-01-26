@@ -20,7 +20,6 @@ type Host struct {
 	StrictKey bool
 	Data      map[string]interface{}
 	Result   map[string]interface{}
-	Connection *network.Driver
 }
 
 type Hosts map[string]*Host
