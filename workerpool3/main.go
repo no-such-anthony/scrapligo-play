@@ -38,25 +38,23 @@ func getVersion(h *Host) {
 	c, err := getConnection(*h)
 	if err != nil {
 		result["error"] = err.Error()
-		fmt.Println(err)
+		fmt.Println(result["error"])
 		h.Result = result
 		return
 	}
 
 	rs, err := c.SendCommand("show version")
 	if err != nil {
-		err := fmt.Errorf("failed to send command for %s: %+v", h.Hostname, err)
-		result["error"] = err.Error()
-		fmt.Println(err)
+		result["error"] = fmt.Sprintf("failed to send command for %s: %+v", h.Hostname, err)
+		fmt.Println(result["error"])
 		h.Result = result
 		return
 	}
 
 	parsedOut, err := rs.TextFsmParse("../textfsm_templates/" + h.Platform + "_show_version.textfsm")
 	if err != nil {
-		err := fmt.Errorf("failed to parse command for %s: %+v", h.Hostname, err)
-		result["error"] = err.Error()
-		fmt.Println(err)
+		result["error"] = fmt.Sprintf("failed to parse command for %s: %+v", h.Hostname, err)
+		fmt.Println(result["error"])
 		h.Result = result
 		return
 	}
@@ -104,7 +102,7 @@ func worker(host_jobs <-chan *Host, wg *sync.WaitGroup) {
 func runner(hosts Hosts) {
 	//waitgroup/channel workerpool combo, storing results in the host pointer
 	var wg sync.WaitGroup
-	const num_workers = 1
+	const num_workers = 7
 	host_jobs := make(chan *Host, len(hosts))
 	wg.Add(len(hosts))
 	
