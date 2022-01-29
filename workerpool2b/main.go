@@ -40,15 +40,13 @@ func getVersion(h Host, conn *network.Driver) map[string]interface{} {
 
 	rs, err := c.SendCommand("show version")
 	if err != nil {
-		msg := fmt.Sprintf("failed to send command for %s: %+v", h.Hostname, err)
-		result["error"] = msg
+		result["error"] = fmt.Sprintf("failed to send command for %s: %+v", h.Hostname, err)
 		return result
 	}
 
 	parsedOut, err := rs.TextFsmParse("../textfsm_templates/" + h.Platform + "_show_version.textfsm")
 	if err != nil {
-		msg := fmt.Sprintf("failed to parse command for %s: %+v", h.Hostname, err)
-		result["error"] = msg
+		result["error"] = fmt.Sprintf("failed to parse command for %s: %+v", h.Hostname, err)
 		return result
 	}
 
@@ -56,22 +54,21 @@ func getVersion(h Host, conn *network.Driver) map[string]interface{} {
 
 	rs, err = c.SendCommand("show run")
 	if err != nil {
-		msg := fmt.Sprintf("failed to send command for %s: %+v", h.Hostname, err)
-		result["error"] = msg
+		result["error"] = fmt.Sprintf("failed to send command for %s: %+v", h.Hostname, err)
 		return result
 	}
 
 	if err = ioutil.WriteFile("../../" + h.Name + ".txt", []byte(rs.Result),0777); err != nil {
-		msg := fmt.Sprintf("failed to write config to disk for %s: %+v", h.Hostname, err)
-		result["error"] = msg
+		result["error"] = fmt.Sprintf("failed to write config to disk for %s: %+v", h.Hostname, err)
 		return result
 	}
 
 	// update host data if we want
 	h.Data["SW version"] = parsedOut[0]["VERSION"]
-	result["result"] = parsedOut[0]
 
-
+	result["result"] = fmt.Sprintf("Hostname: %s\nHardware: %s\nSW Version: %s\nUptime: %s",
+							parsedOut[0]["HOSTNAME"], parsedOut[0]["HARDWARE"],
+							parsedOut[0]["VERSION"], parsedOut[0]["UPTIME"])
 	return result
 }
 
@@ -86,7 +83,7 @@ func worker(host_jobs <-chan Host, host_results chan<- map[string]interface{}) {
 			result["name"] = h.Name
 			result["error"] = err.Error()
 			host_results <- result
-
+			continue
 		} else {
 			// put your tasks here
 			result := getVersion(h, conn)
@@ -136,32 +133,24 @@ func main() {
 	}
 	close(host_jobs)
 
-	fmt.Println("Printing worker results as they arrive back from worker pools...\n")
+	fmt.Println("Printing worker results as they arrive...\n")
 	for r := 1; r <= len(hosts); r++ {
-		results := <-host_results
-		//fmt.Println(results)
-		if err, ok := results["error"]; ok {
-			fmt.Printf("Host: %s had error %s\n\n", results["name"], err)
+		result := <-host_results
+		if err, ok := result["error"]; ok {
+			fmt.Printf("Host: %s had error %s\n\n", result["name"], err)
 		} else {
-			result := results["result"].(map[string]interface{})
-			fmt.Printf("Hostname: %s\nHardware: %s\nSW Version: %s\nUptime: %s\n\n",
-					result["HOSTNAME"], result["HARDWARE"],
-					result["VERSION"], result["UPTIME"])
+			fmt.Printf("Host: %s results =>\n%s\n\n", result["name"], result["result"])
 		}
-		agg_results[results["name"].(string)] = results
+		agg_results[result["name"].(string)] = result
 	}
 	fmt.Println("\n\n")
 	fmt.Println("And again, as we stored the results such that we can use outside of the return channel loop.\n")
 	for name, results := range agg_results {
-		//fmt.Println(name, results)
 		result := results.(map[string]interface{})
 		if err, ok := result["error"]; ok {
 			fmt.Printf("Host: %s had error %s\n\n", name, err)
 		} else {
-			result = result["result"].(map[string]interface{})
-			fmt.Printf("Hostname: %s\nHardware: %s\nSW Version: %s\nUptime: %s\n\n",
-					result["HOSTNAME"], result["HARDWARE"],
-					result["VERSION"], result["UPTIME"])
+			fmt.Printf("Host: %s results =>\n%s\n\n", name, result["result"])
 		}
 	}
 	

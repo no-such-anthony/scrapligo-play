@@ -27,3 +27,5 @@ r4:
   hostname: 192.168.204.104
   groups:
     - group3
+no.suchdomain:
+  hostname: no.suchdomain
