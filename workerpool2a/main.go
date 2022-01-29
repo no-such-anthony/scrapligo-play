@@ -7,7 +7,6 @@ import (
 	"github.com/scrapli/scrapligo/driver/base"
 	"github.com/scrapli/scrapligo/driver/core"
 	"github.com/scrapli/scrapligo/driver/network"
-	"errors"
 )
 
 type Host struct {
@@ -24,11 +23,6 @@ type Host struct {
 type Hosts map[string]*Host
 
 
-func timeTrack(start time.Time) {
-	elapsed := time.Since(start)
-	fmt.Printf("This process took %s\n", elapsed)
-}
-
 func getConnection(h Host) (*network.Driver, error) {
 
 	c, err := core.NewCoreDriver(
@@ -43,14 +37,12 @@ func getConnection(h Host) (*network.Driver, error) {
 	)
 
 	if err != nil {
-		msg := fmt.Sprintf("failed to create driver for %s: %+v", h.Hostname, err)
-		return c, errors.New(msg)
+		return c, fmt.Errorf("failed to create driver for %s: %+v", h.Hostname, err)
 	}
 
 	err = c.Open()
 	if err != nil {
-		msg := fmt.Sprintf("failed to open driver for %s: %+v", h.Hostname, err)
-		return c,errors.New(msg)
+		return c, fmt.Errorf("failed to open driver for %s: %+v", h.Hostname, err)
 	}
 
 	return c, nil 
@@ -61,30 +53,103 @@ func getVersion(h Host, conn *network.Driver) map[string]interface{} {
 
 	result := make(map[string]interface{})
 	result["name"] = h.Name
-
 	c := conn
 
 	rs, err := c.SendCommand("show version")
 	if err != nil {
-		msg := fmt.Sprintf("failed to send command for %s: %+v", h.Hostname, err)
-		result["error"] = msg
+		result["error"] = fmt.Sprintf("failed to send command for %s: %+v", h.Hostname, err)
 		return result
 	}
 
 	parsedOut, err := rs.TextFsmParse("../textfsm_templates/" + h.Platform + "_show_version.textfsm")
 	if err != nil {
-		msg := fmt.Sprintf("failed to parse command for %s: %+v", h.Hostname, err)
-		result["error"] = msg
+		result["error"] = fmt.Sprintf("failed to parse command for %s: %+v", h.Hostname, err)
 		return result
 	}
 
 	// update host data if we want
 	h.Data["SW version"] = parsedOut[0]["VERSION"]
 
-	result["result"] = parsedOut[0]
-
+	result["result"] = fmt.Sprintf("Hostname: %s\nHardware: %s\nSW Version: %s\nUptime: %s",
+							parsedOut[0]["HOSTNAME"], parsedOut[0]["HARDWARE"],
+							parsedOut[0]["VERSION"], parsedOut[0]["UPTIME"])
 	return result
 }
+
+
+func worker(host_jobs <-chan Host, host_results chan<- map[string]interface{}) {
+
+	for h := range host_jobs {
+		conn, err := getConnection(h)
+		if err != nil {
+			result := make(map[string]interface{})
+			result["name"] = h.Name
+			result["error"] = err.Error()
+			host_results <- result
+			continue
+		} else {
+			// put your tasks here
+			result := getVersion(h, conn)
+			host_results <- result
+		}
+		conn.Close()
+		
+	}
+}
+
+func main() {
+	// To time this process
+	defer timeTrack(time.Now())
+
+	hosts := getHosts()
+	//fmt.Println(hosts)
+
+	// In/Out buffered channels with a results returned channel and num_workers.
+	const num_workers = 7
+	host_jobs := make(chan Host, len(hosts))	// room to drop all hosts into the channel at once.
+	host_results := make(chan map[string]interface{}, len(hosts)) // make sure enough buffer or could end up with deadlock.
+	agg_results := make(map[string]interface{})
+
+	//worker pools
+	for w := 1; w <= num_workers; w++ {
+		go worker(host_jobs, host_results)
+	}
+
+	for _, host := range hosts {
+		host_jobs <- *host
+	}
+	close(host_jobs)
+
+	fmt.Println("Printing worker results as they arrive...\n")
+	for r := 1; r <= len(hosts); r++ {
+		result := <-host_results
+		if err, ok := result["error"]; ok {
+			fmt.Printf("Host: %s had error %s\n\n", result["name"], err)
+		} else {
+			fmt.Printf("Host: %s results =>\n%s\n\n", result["name"], result["result"])
+		}
+		agg_results[result["name"].(string)] = result
+	}
+	fmt.Println("\n\n")
+	fmt.Println("And again, as we stored the results such that we can use outside of the return channel loop.\n")
+	for name, results := range agg_results {
+		result := results.(map[string]interface{})
+		if err, ok := result["error"]; ok {
+			fmt.Printf("Host: %s had error %s\n\n", name, err)
+		} else {
+			fmt.Printf("Host: %s results =>\n%s\n\n", name, result["result"])
+		}
+	}
+	
+	//verify host Data updated...
+	fmt.Println("\n\n")
+	fmt.Println("And lastly verify host data was updated during goroutines.\n")
+	for _, host := range hosts {
+		fmt.Println(host.Data)
+	}
+	fmt.Println("\n\n")
+}
+
 
 func getHosts() Hosts {
 
@@ -110,83 +175,8 @@ func getHosts() Hosts {
 	return hosts
 }
 
-func worker(host_jobs <-chan Host, host_results chan<- map[string]interface{}) {
 
-	for h := range host_jobs {
-		conn, err := getConnection(h)
-		if err != nil {
-			result := make(map[string]interface{})
-			result["name"] = h.Name
-			result["error"] = err.Error()
-			host_results <- result
-
-		} else {
-			// put your tasks here
-			result := getVersion(h, conn)
-			host_results <- result
-		}
-		conn.Close()
-		
-	}
-}
-
-func main() {
-	// To time this process
-	defer timeTrack(time.Now())
-
-	hosts := getHosts()
-	//fmt.Println(hosts)
-
-	// In/Out buffered channels with a results returned channel and num_workers.
-	const num_workers = 5
-	host_jobs := make(chan Host, len(hosts))	// room to drop all hosts into the channel at once.
-	host_results := make(chan map[string]interface{}, len(hosts)) // make sure enough buffer or could end up with deadlock.
-	agg_results := make(map[string]interface{})
-
-	//worker pools
-	for w := 1; w <= num_workers; w++ {
-		go worker(host_jobs, host_results)
-	}
-
-	for _, host := range hosts {
-		host_jobs <- *host
-	}
-	close(host_jobs)
-
-	fmt.Println("Printing worker results as they arrive...\n")
-	for r := 1; r <= len(hosts); r++ {
-		results := <-host_results
-		//fmt.Println(results)
-		if err, ok := results["error"]; ok {
-			fmt.Printf("Host: %s had error %s\n\n", results["name"], err)
-		} else {
-			result := results["result"].(map[string]interface{})
-			fmt.Printf("Hostname: %s\nHardware: %s\nSW Version: %s\nUptime: %s\n\n",
-					result["HOSTNAME"], result["HARDWARE"],
-					result["VERSION"], result["UPTIME"])
-		}
-		agg_results[results["name"].(string)] = results
-	}
-	fmt.Println("\n\n")
-	fmt.Println("And again, as we stored the results such that we can use outside of the return channel loop.\n")
-	for name, results := range agg_results {
-		//fmt.Println(name, results)
-		result := results.(map[string]interface{})
-		if err, ok := result["error"]; ok {
-			fmt.Printf("Host: %s had error %s\n\n", name, err)
-		} else {
-			result = result["result"].(map[string]interface{})
-			fmt.Printf("Hostname: %s\nHardware: %s\nSW Version: %s\nUptime: %s\n\n",
-					result["HOSTNAME"], result["HARDWARE"],
-					result["VERSION"], result["UPTIME"])
-		}
-	}
-	
-	//verify host Data updated...
-	fmt.Println("\n\n")
-	fmt.Println("And lastly verify host data was updated during goroutines.\n")
-	for _, host := range hosts {
-		fmt.Println(host.Data)
-	}
-	fmt.Println("\n\n")
+func timeTrack(start time.Time) {
+	elapsed := time.Since(start)
+	fmt.Printf("This process took %s\n", elapsed)
 }
