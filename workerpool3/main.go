@@ -132,9 +132,9 @@ func main() {
 		fmt.Println(name)
 		if err, ok := host.Result["error"]; ok {
 			fmt.Println(err)
-		} else {
-			fmt.Println(host.Result["result"])
+			continue
 		}
+		fmt.Println(host.Result["result"])
 	}
 
 }

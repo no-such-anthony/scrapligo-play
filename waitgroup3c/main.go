@@ -74,32 +74,31 @@ func runTasks(h Host, tasks Tasks) ([]interface{}, error) {
 		result["connection"] = err
 		results = append(results, result)
 		return results, err
-	} else {
-		h.Connection = c
-		// task loop
-		for _, task := range tasks {
+	}
+	h.Connection = c
+	// task loop
+	for _, task := range tasks {
 
-			//localise host task
-			hostTask := task
+		//localise host task
+		hostTask := task
 
-			//add latest result set to args for task
-			hostTask.Args["result"] = results
+		//add latest result set to args for task
+		hostTask.Args["result"] = results
 
-			//reset result
-			result = make(map[string]interface{})
-			
-			res, err := task.Function(h, hostTask.Args)
-			if err != nil {
-				result[hostTask.Name] = err
-				results = append(results, result)
-				return results, err
-			}
-			result[hostTask.Name] = res
+		//reset result
+		result = make(map[string]interface{})
+		
+		res, err := task.Function(h, hostTask.Args)
+		if err != nil {
+			result[hostTask.Name] = err
 			results = append(results, result)
-
+			return results, err
 		}
+		result[hostTask.Name] = res
+		results = append(results, result)
 
 	}
+
 
 	c.Close()
 	return results, nil

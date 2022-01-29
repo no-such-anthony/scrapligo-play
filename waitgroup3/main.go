@@ -101,23 +101,18 @@ func main() {
 	//fmt.Println(hosts)
 
 	var wg sync.WaitGroup
-
 	num_workers := 2
 	guard := make(chan bool, num_workers)
 
 	//Note: Combining Waitgroup with a channel to restrict number of goroutines.
-
+	wg.Add(len(hosts))
 	for _, host := range hosts {
-	
 		guard <- true
-		wg.Add(1)
-	
 		go func(h Host) {
 			defer wg.Done()
 			getVersion(h)
 			<-guard
 		}(host)
-    
 	}
 	wg.Wait()
 

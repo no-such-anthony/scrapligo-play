@@ -105,22 +105,19 @@ func main() {
 	results := make(map[string]string)
 
 	//Combining Waitgroup with a channel to restrict number of goroutines.
-
+	wg.Add(len(hosts))
 	for _, host := range hosts {
 	
 		guard <- true
-		wg.Add(1)
-	
 		go func(h Host) {
 			defer wg.Done()
 			res, err := getVersion(h)
 			//Print errors immediately but collate results for printing later.
 			if err != nil {
 				fmt.Println(err.Error())
-				results[h.Name] = err.Error()
-			} else {
-				results[h.Name] = res
+				res = err.Error()
 			}
+			results[h.Name] = res
 			<-guard
 		}(host)
     

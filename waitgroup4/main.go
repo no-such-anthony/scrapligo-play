@@ -104,7 +104,7 @@ func main() {
 
 	var wg sync.WaitGroup
 
-	num_workers := 2
+	num_workers := 7
 	var sem = semaphore.NewWeighted(int64(num_workers))
 
 	// a context is required for the weighted semaphore pkg.

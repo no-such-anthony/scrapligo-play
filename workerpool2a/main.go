@@ -121,12 +121,12 @@ func main() {
 	fmt.Println("Printing worker results as they arrive...\n")
 	for r := 1; r <= len(hosts); r++ {
 		result := <-host_results
+		agg_results[result["name"].(string)] = result
 		if err, ok := result["error"]; ok {
 			fmt.Printf("Host: %s had error %s\n\n", result["name"], err)
-		} else {
-			fmt.Printf("Host: %s results =>\n%s\n\n", result["name"], result["result"])
+			continue
 		}
-		agg_results[result["name"].(string)] = result
+		fmt.Printf("Host: %s results =>\n%s\n\n", result["name"], result["result"])	
 	}
 	fmt.Println("\n\n")
 	fmt.Println("And again, as we stored the results such that we can use outside of the return channel loop.\n")
@@ -134,9 +134,9 @@ func main() {
 		result := results.(map[string]interface{})
 		if err, ok := result["error"]; ok {
 			fmt.Printf("Host: %s had error %s\n\n", name, err)
-		} else {
-			fmt.Printf("Host: %s results =>\n%s\n\n", name, result["result"])
+			continue
 		}
+		fmt.Printf("Host: %s results =>\n%s\n\n", name, result["result"])
 	}
 	
 	//verify host Data updated...

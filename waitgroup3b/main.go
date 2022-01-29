@@ -51,16 +51,14 @@ func getVersion(h Host, c *network.Driver) (string, error) {
 func runTasks(h Host) (string, error) {
 
 	res := ""
-
 	c, err := getConnection(h)
 	if err != nil {
 		return err.Error(), err
-	} else {
-		// put all your tasks here
-		res, err = getVersion(h, c)
-		if err != nil {
-			return res, err
-		}
+	}
+	// put all your tasks here
+	res, err = getVersion(h, c)
+	if err != nil {
+		return res, err
 	}
 
 	c.Close()
