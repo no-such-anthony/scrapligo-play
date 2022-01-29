@@ -87,13 +87,11 @@ func worker(host_jobs <-chan Host, host_results chan<- map[string]interface{}) {
 			result["error"] = err.Error()
 			host_results <- result
 			continue
-		} else {
-			// put your tasks here
-			result := getVersion(h, conn)
-			host_results <- result
 		}
+		// put your tasks here
+		result := getVersion(h, conn)
+		host_results <- result
 		conn.Close()
-		
 	}
 }
 
