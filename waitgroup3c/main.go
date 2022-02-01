@@ -79,22 +79,26 @@ func runTasks(h Host, tasks Tasks) ([]interface{}, error) {
 	// task loop
 	for _, task := range tasks {
 
-		//localise host task
-		hostTask := task
-
+		//create a copy of task args to avoid "fatal error: concurrent map writes"
+		//when adding results into the kwargs map
+		hostTaskArgs := make(map[string]interface{})
+		for k,v := range task.Args {
+			hostTaskArgs[k] = v
+		}
+		
 		//add latest result set to args for task
-		hostTask.Args["result"] = results
+		hostTaskArgs["result"] = results
 
 		//reset result
 		result = make(map[string]interface{})
 		
-		res, err := task.Function(h, hostTask.Args)
+		res, err := task.Function(h, hostTaskArgs)
 		if err != nil {
-			result[hostTask.Name] = err
+			result[task.Name] = err
 			results = append(results, result)
 			return results, err
 		}
-		result[hostTask.Name] = res
+		result[task.Name] = res
 		results = append(results, result)
 
 	}
