@@ -28,22 +28,21 @@ type Hosts map[string]*Host
 
 type Task struct {
 	Name		string
-	Function	func(Host, map[string]interface{}) (map[string]interface{}, error)
+	Function	func(Host, map[string]interface{}, map[string]interface{}) (map[string]interface{}, error)
 	Args		map[string]interface{}
 }
 
 type Tasks []Task
 
 
-func getVersion(h Host, kwargs map[string]interface{}) (map[string]interface{}, error) {
+func getVersion(h Host, kwargs map[string]interface{}, prev_results map[string]interface{}) (map[string]interface{}, error) {
 
 	res := make(map[string]interface{})
 
 	c := h.Connection
 
-	if value, ok := kwargs["test"]; ok {
-		fmt.Println(value)
-	}
+	fmt.Printf("%v - getVersion args: %+v\n",h.Name, kwargs)
+	fmt.Printf("%v - getVersion prev results: %+v\n",h.Name, prev_results)
 
 	rs, err := c.SendCommand("show version")
 	if err != nil {
@@ -64,45 +63,33 @@ func getVersion(h Host, kwargs map[string]interface{}) (map[string]interface{}, 
 }
 
 
-func runTasks(h Host, tasks Tasks) ([]interface{}, error) {
+func runTasks(h Host, tasks Tasks) (map[string]interface{}, error) {
 
-	results := []interface{}{}
+	results := make(map[string]interface{})
 	result := make(map[string]interface{})
 
 	c, err := getConnection(h)
 	if err != nil {
-		result["connection"] = err
-		results = append(results, result)
+		result["result"] = err
+		results["connection"] = result
 		return results, err
 	}
 	h.Connection = c
 	// task loop
 	for _, task := range tasks {
-
-		//create a copy of task args to avoid "fatal error: concurrent map writes"
-		//when adding results into the kwargs map
-		hostTaskArgs := make(map[string]interface{})
-		for k,v := range task.Args {
-			hostTaskArgs[k] = v
-		}
 		
-		//add latest result set to args for task
-		hostTaskArgs["result"] = results
+		res, err := task.Function(h, task.Args, results)
+		if err != nil {
+			result["result"] = err
+			results[task.Name] = result
+			return results, err
+		}
+		results[task.Name] = res
 
 		//reset result
 		result = make(map[string]interface{})
-		
-		res, err := task.Function(h, hostTaskArgs)
-		if err != nil {
-			result[task.Name] = err
-			results = append(results, result)
-			return results, err
-		}
-		result[task.Name] = res
-		results = append(results, result)
 
 	}
-
 
 	c.Close()
 	return results, nil
@@ -140,8 +127,8 @@ func main() {
 	fmt.Print("\n\n")
 	for host, result := range results {
 		fmt.Println("Name:", host)
-		for _, res := range result.([]interface{}) {
-			fmt.Println(res)
+		for tn, res := range result.(map[string]interface{}) {
+			fmt.Println(tn, res)
 		}
 		fmt.Print("\n\n")
 	}
