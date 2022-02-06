@@ -21,6 +21,7 @@ type Host struct {
 	StrictKey bool
 	Connection *network.Driver
 	Data      map[string]interface{}
+	Result    []map[string]interface{}
 }
 
 
@@ -28,21 +29,23 @@ type Hosts map[string]*Host
 
 type Task struct {
 	Name		string
-	Function	func(Host, map[string]interface{}, map[string]interface{}) (map[string]interface{}, error)
+	Function	func(*Host, map[string]interface{}) (map[string]interface{}, error)
 	Args		map[string]interface{}
 }
 
 type Tasks []Task
 
 
-func getVersion(h Host, kwargs map[string]interface{}, prev_results map[string]interface{}) (map[string]interface{}, error) {
+func getVersion(h *Host, kwargs map[string]interface{}) (map[string]interface{}, error) {
 
 	res := make(map[string]interface{})
 
 	c := h.Connection
 
-	fmt.Printf("%v - getVersion args: %+v\n",h.Name, kwargs)
-	fmt.Printf("%v - getVersion prev results: %+v\n",h.Name, prev_results)
+	fmt.Printf("%v - args: %+v\n",h.Name, kwargs)
+	if len(h.Result)>=1 {
+		fmt.Printf("%v - previous result: %+v\n",h.Name, h.Result[len(h.Result)-1])
+	}
 
 	rs, err := c.SendCommand("show version")
 	if err != nil {
@@ -63,36 +66,33 @@ func getVersion(h Host, kwargs map[string]interface{}, prev_results map[string]i
 }
 
 
-func runTasks(h Host, tasks Tasks) (map[string]interface{}, error) {
+func runTasks(h *Host, tasks Tasks) (error) {
 
-	results := make(map[string]interface{})
-	result := make(map[string]interface{})
-
-	c, err := getConnection(h)
+	c, err := getConnection(*h)
 	if err != nil {
-		result["result"] = err
-		results["connection"] = result
-		return results, err
+		result := make(map[string]interface{})
+		result["connection"] = err
+		h.Result = append(h.Result, result)
+		return err
 	}
 	h.Connection = c
+
 	// task loop
 	for _, task := range tasks {
-		
-		res, err := task.Function(h, task.Args, results)
+
+		result := make(map[string]interface{})
+		res, err := task.Function(h, task.Args)
 		if err != nil {
-			result["result"] = err
-			results[task.Name] = result
-			return results, err
+			result[task.Name] = err
+			h.Result = append(h.Result, result)
+			return err
 		}
-		results[task.Name] = res
-
-		//reset result
-		result = make(map[string]interface{})
-
+		result[task.Name] = res
+		h.Result = append(h.Result, result)
 	}
 
 	c.Close()
-	return results, nil
+	return nil
 
 }
 
@@ -122,13 +122,17 @@ func main() {
 	tasks = append(tasks, task2)
 	//fmt.Printf("%+v\n", tasks)
 
-	results := runner(hosts, tasks)
+	runner(hosts, tasks)
+
 
 	fmt.Print("\n\n")
-	for host, result := range results {
-		fmt.Println("Name:", host)
-		for tn, res := range result.(map[string]interface{}) {
-			fmt.Println(tn, res)
+	fmt.Println("======================= RESULTS ========================================")
+	for n, h := range hosts {
+		fmt.Println("Name:", n)
+		fmt.Println("Length:",len(h.Result))
+		//fmt.Println(h.Result)
+		for _, res := range h.Result {
+			fmt.Println(res)
 		}
 		fmt.Print("\n\n")
 	}
@@ -136,38 +140,30 @@ func main() {
 }
 
 
-func runner(hosts Hosts, tasks Tasks) map[string]interface{} {
+func runner(hosts Hosts, tasks Tasks) {
 
 	var wg sync.WaitGroup
 
 	num_workers := 7
 	guard := make(chan bool, num_workers)
-	results := make(map[string]interface{})
 	wg.Add(len(hosts))
-	mux := &sync.Mutex{}
 
 	//Combining Waitgroup with a channel to restrict number of goroutines.
 
 	for _, host := range hosts {
 	
 		guard <- true
-		go func(h Host) {
+		go func(h *Host) {
 			defer wg.Done()
-			res, err := runTasks(h, tasks)
+			err := runTasks(h, tasks)
 			//Print errors immediately but collate results for printing later.
 			if err != nil {
 				fmt.Println(err.Error())
 			}
-			mux.Lock()
-			results[h.Name] = res
-			mux.Unlock()
 			<-guard
-		}(*host)
-    
+		}(host)
 	}
 	wg.Wait()
-
-	return results
 }
 
 
@@ -207,7 +203,7 @@ func getHosts() Hosts {
 	for _,value := range devices {
 		var host Host
 		host.Data = make(map[string]interface{})
-
+		host.Result = make([]map[string]interface{},0)
 		host.Name = value
 		host.Hostname = value
 		host.Platform = "cisco_iosxe"
