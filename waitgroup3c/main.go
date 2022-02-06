@@ -39,7 +39,6 @@ type Tasks []Task
 func getVersion(h *Host, kwargs map[string]interface{}) (map[string]interface{}, error) {
 
 	res := make(map[string]interface{})
-
 	c := h.Connection
 
 	fmt.Printf("%v - args: %+v\n",h.Name, kwargs)
@@ -129,8 +128,6 @@ func main() {
 	fmt.Println("======================= RESULTS ========================================")
 	for n, h := range hosts {
 		fmt.Println("Name:", n)
-		fmt.Println("Length:",len(h.Result))
-		//fmt.Println(h.Result)
 		for _, res := range h.Result {
 			fmt.Println(res)
 		}
