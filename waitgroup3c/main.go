@@ -78,7 +78,6 @@ func runTasks(h *Host, tasks Tasks) (error) {
 
 	// task loop
 	for _, task := range tasks {
-
 		result := make(map[string]interface{})
 		res, err := task.Function(h, task.Args)
 		if err != nil {
@@ -123,9 +122,8 @@ func main() {
 
 	runner(hosts, tasks)
 
-
 	fmt.Print("\n\n")
-	fmt.Println("======================= RESULTS ========================================")
+	fmt.Println("======================= RESULTS =================================")
 	for n, h := range hosts {
 		fmt.Println("Name:", n)
 		for _, res := range h.Result {
@@ -146,14 +144,12 @@ func runner(hosts Hosts, tasks Tasks) {
 	wg.Add(len(hosts))
 
 	//Combining Waitgroup with a channel to restrict number of goroutines.
-
 	for _, host := range hosts {
-	
 		guard <- true
 		go func(h *Host) {
 			defer wg.Done()
 			err := runTasks(h, tasks)
-			//Print errors immediately but collate results for printing later.
+			//Print errors immediately
 			if err != nil {
 				fmt.Println(err.Error())
 			}
