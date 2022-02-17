@@ -3,25 +3,20 @@ package app
 import (
 	"fmt"
 	"sync"
-	"github.com/scrapli/scrapligo/driver/base"
-	"github.com/scrapli/scrapligo/driver/core"
-	"github.com/scrapli/scrapligo/driver/network"
 	"main/app/inventory"
-
+	"main/app/connections"
+	"main/app/tasks"
+	//"github.com/scrapli/scrapligo/driver/network"
 )
 
 
-type RunTask interface {
-	Run(*inventory.Host, []map[string]interface{}) (map[string]interface{}, error)
-	Named() string
-}
-
-
-func runTasks(h *inventory.Host, t []RunTask, rc chan<- []map[string]interface{}) {
+func runTasks(h *inventory.Host, t []tasks.RunTask, rc chan<- []map[string]interface{}) {
 
 	host_results := []map[string]interface{}{}
 
-	c, err := getConnection(*h)
+	conn := connections.ScrapligoSsh{}
+
+	err := connections.Connectors.Open(&conn, h)
 	if err != nil {
 		result := make(map[string]interface{})
 		result["task"] = "connection"
@@ -31,7 +26,8 @@ func runTasks(h *inventory.Host, t []RunTask, rc chan<- []map[string]interface{}
 		rc <- host_results
 		return
 	}
-	h.Connection = c
+	
+	h.Connection = conn.C
 
 	// task loop
 	for _, task := range t {
@@ -48,13 +44,13 @@ func runTasks(h *inventory.Host, t []RunTask, rc chan<- []map[string]interface{}
 		result["result"] = res
 		host_results = append(host_results, result)
 	}
-	c.Close()
+	h.Connection.Close()
 	rc <- host_results
 
 }
 
 
-func Runner(hosts inventory.Hosts, t []RunTask) (map[string]interface{})  {
+func Runner(hosts inventory.Hosts, t []tasks.RunTask) (map[string]interface{})  {
 
 	var wg sync.WaitGroup
 
@@ -85,31 +81,4 @@ func Runner(hosts inventory.Hosts, t []RunTask) (map[string]interface{})  {
 	}
 	wg.Wait()
 	return results
-}
-
-
-func getConnection(h inventory.Host) (*network.Driver, error) {
-
-	c, err := core.NewCoreDriver(
-		h.Hostname,
-		h.Platform,
-		base.WithAuthStrictKey(h.StrictKey),
-		base.WithAuthUsername(h.Username),
-		base.WithAuthPassword(h.Password),
-		//base.WithAuthSecondary(h.Enable),
-		//base.WithTransportType("standard"),
-		//base.WithSSHConfigFile("ssh_config"),
-	)
-
-	if err != nil {
-		return c, fmt.Errorf("failed to create driver for %s: %+v", h.Hostname, err)
-	}
-
-	err = c.Open()
-	if err != nil {
-		return c, fmt.Errorf("failed to open driver for %s: %+v", h.Hostname, err)
-	}
-
-	return c, nil 
-
 }

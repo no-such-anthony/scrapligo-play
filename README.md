@@ -11,7 +11,7 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 - waitgroup3b - Restructure into functions
 - waitgroup3c - Attempt at a simple playbook/runbook/taskbook in code example, results placed in host struct
 - waitgroup3d - Attempt at a simple playbook/runbook/taskbook in code example, results return via channel
-- waitgroup3e - Like waitgroup3d but trying interfaces and a simple package structure
+- waitgroup3e - Like waitgroup3d but trying interfaces and a simple package structure (work in progress)
 - waitgroup4 - Waitgroup with semaphore to restrict number of goroutines.
 - workerpool1 - In/Out buffered channels with a boolean 'done' channel for completion.
 - workerpool2 - In/Out buffered channels with a results returned channel.

@@ -28,7 +28,7 @@ func main() {
 		Kwargs: map[string]interface{} { "hello": "second"},
 	}
 
-	t := []app.RunTask{&task1, &task2}
+	t := []tasks.RunTask{&task1, &task2}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)
