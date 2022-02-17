@@ -24,7 +24,7 @@ func runTasks(h *inventory.Host, t []RunTask, rc chan<- []map[string]interface{}
 	c, err := getConnection(*h)
 	if err != nil {
 		result := make(map[string]interface{})
-		result["name"] = "connection"
+		result["task"] = "connection"
 		result["result"] = err
 		result["failed"] = true
 		host_results = append(host_results, result)
