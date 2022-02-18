@@ -6,34 +6,23 @@ import (
 )
 
 
-type ShowVersion struct {
+type NetconfShowVersion struct {
 	Name string
 	Kwargs map[string]interface{}
-	Include map[string][]string
-	Exclude map[string][]string
 }
 
 
-func (s *ShowVersion) Named() string {
+func (s *NetconfShowVersion) Named() string {
 	return fmt.Sprint(s.Name)
 }
 
 
-func (s *ShowVersion) Run(h *inventory.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
-
-	// === Required
+func (s *NetconfShowVersion) Run(h *inventory.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	res := make(map[string]interface{})
-	res["task"] = s.Name
-
-	if inventory.Skip(h, s.Include, s.Exclude) {
-		res["skipped"] = true
-		return res, nil
-	}
+	res["name"] = s.Name
 
 	c := h.Connection
-
-	// ==== Custom
 
 	fmt.Printf("%v - args: %+v\n",h.Name, s.Kwargs)
 	if len(prev_results)>=1 {
@@ -59,9 +48,6 @@ func (s *ShowVersion) Run(h *inventory.Host, prev_results []map[string]interface
 				h.Hostname, parsedOut[0]["HARDWARE"],
 				parsedOut[0]["VERSION"], parsedOut[0]["UPTIME"])
 
-	// ====== Required
-
 	return res, nil
 
 }
-

@@ -21,11 +21,13 @@ func main() {
 	task1 := tasks.ShowVersion{
 		Name: "my first show version",
 		Kwargs: map[string]interface{} { "hello": "first"},
+		Include: map[string][]string{"name": []string{"192.168.204.101","r2"}},
 	}
 
 	task2 := tasks.ShowVersion{
 		Name: "my second show version",
 		Kwargs: map[string]interface{} { "hello": "second"},
+		Exclude: map[string][]string{"name": []string{"192.168.204.101","r2"}},
 	}
 
 	t := []tasks.RunTask{&task1, &task2}

@@ -13,6 +13,7 @@ type Host struct {
 	Password  string
 	Enable    string
 	StrictKey bool
+	Groups    []string
 	Connection *network.Driver
 	Data      map[string]interface{}
 }

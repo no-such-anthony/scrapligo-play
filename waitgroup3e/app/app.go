@@ -32,17 +32,16 @@ func runTasks(h *inventory.Host, t []tasks.RunTask, rc chan<- []map[string]inter
 	// task loop
 	for _, task := range t {
 		result := make(map[string]interface{})
-		result["task"] = task.Named()
 		res, err := task.Run(h, host_results)
 		if err != nil {
 			result["result"] = err
 			result["failed"] = true
+			result["task"] = task.Named()
 			host_results = append(host_results, result)
 			rc <- host_results
 			return
 		}
-		result["result"] = res
-		host_results = append(host_results, result)
+		host_results = append(host_results, res)
 	}
 	h.Connection.Close()
 	rc <- host_results
@@ -59,6 +58,7 @@ func Runner(hosts inventory.Hosts, t []tasks.RunTask) (map[string]interface{})  
 	rc := make(chan []map[string]interface{}, num_workers)
 	results := map[string]interface{}{}
 	wg.Add(len(hosts))
+	mutex := &sync.Mutex{}
 
 	//Combining Waitgroup with a channel to restrict number of goroutines.
 	//Results returned in a channel.
@@ -74,8 +74,9 @@ func Runner(hosts inventory.Hosts, t []tasks.RunTask) (map[string]interface{})  
 				fmt.Println("error:", res)
 			}
 			//fmt.Println(res)
-
+			mutex.Lock()
 			results[h.Name] = res
+			mutex.Unlock()
 			<-guard
 		}(host)
 	}
