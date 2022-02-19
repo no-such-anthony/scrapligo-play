@@ -19,8 +19,6 @@ func (s ScrapligoNetconf) Close() {
 
 func (s *ScrapligoNetconf) Open(h *inventory.Host) (error) {
 
-	fmt.Println("bug")
-
 	c, err := netconf.NewNetconfDriver(
 		h.Hostname,
 		base.WithPort(h.Port),
