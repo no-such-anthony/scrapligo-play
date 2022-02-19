@@ -1,10 +1,10 @@
 package connections
 
 import (
-	"main/app/inventory"
+	//"main/app/inventory"
 )
 
 type Connectors interface {
-	Open(*inventory.Host)  (error)
+	//Open(*inventory.Host)  (error)
 	Close()
 }

@@ -19,15 +19,14 @@ func (s ScrapligoNetconf) Close() {
 
 func (s *ScrapligoNetconf) Open(h *inventory.Host) (error) {
 
+	fmt.Println("bug")
+
 	c, err := netconf.NewNetconfDriver(
 		h.Hostname,
-		//h.Platform,
+		base.WithPort(h.Port),
 		base.WithAuthStrictKey(h.StrictKey),
 		base.WithAuthUsername(h.Username),
 		base.WithAuthPassword(h.Password),
-		//base.WithAuthSecondary(h.Enable),
-		//base.WithTransportType("standard"),
-		//base.WithSSHConfigFile("ssh_config"),
 	)
 
 	if err != nil {

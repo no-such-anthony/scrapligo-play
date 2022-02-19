@@ -10,13 +10,22 @@ import (
 )
 
 
-func runTasks(h *inventory.Host, t []tasks.RunTask, rc chan<- []map[string]interface{}) {
+func runTasks(h *inventory.Host, t []tasks.Tasker, rc chan<- []map[string]interface{}) {
 
 	host_results := []map[string]interface{}{}
 
-	conn := connections.ScrapligoSsh{}
+	var cc inventory.Connector
 
-	err := connections.Connectors.Open(&conn, h)
+	switch h.Method {
+	case "scrapli_ssh": 
+		cc = inventory.Connector(&connections.ScrapligoSsh{})
+	case "scrapli_netconf": 
+		cc = inventory.Connector(&connections.ScrapligoNetconf{})
+	default:
+		cc = inventory.Connector(&connections.ScrapligoSsh{})
+	}
+
+	err := cc.Open(h)
 	if err != nil {
 		result := make(map[string]interface{})
 		result["task"] = "connection"
@@ -26,8 +35,7 @@ func runTasks(h *inventory.Host, t []tasks.RunTask, rc chan<- []map[string]inter
 		rc <- host_results
 		return
 	}
-	
-	h.Connection = conn.C
+	h.Connection = cc
 
 	// task loop
 	for _, task := range t {
@@ -49,7 +57,7 @@ func runTasks(h *inventory.Host, t []tasks.RunTask, rc chan<- []map[string]inter
 }
 
 
-func Runner(hosts inventory.Hosts, t []tasks.RunTask) (map[string]interface{})  {
+func Runner(hosts inventory.Hosts, t []tasks.Tasker) (map[string]interface{})  {
 
 	var wg sync.WaitGroup
 

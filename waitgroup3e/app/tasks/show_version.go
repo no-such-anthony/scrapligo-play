@@ -3,6 +3,7 @@ package tasks
 import (
 	"fmt"
 	"main/app/inventory"
+	"main/app/connections"
 )
 
 
@@ -31,7 +32,11 @@ func (s *ShowVersion) Run(h *inventory.Host, prev_results []map[string]interface
 		return res, nil
 	}
 
-	c := h.Connection
+	conn, ok := h.Connection.(*connections.ScrapligoSsh)
+	if !ok {
+		return res, fmt.Errorf("no connection method for %s", h.Hostname)	
+	}
+	c := conn.C
 
 	// ==== Custom
 

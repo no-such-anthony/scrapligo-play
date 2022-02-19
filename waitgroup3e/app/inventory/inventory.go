@@ -1,20 +1,25 @@
 package inventory
 
 import (
-	"github.com/scrapli/scrapligo/driver/network"
 )
 
+type Connector interface {
+	Open(*Host)  (error)
+	Close()
+}
 
 type Host struct {
 	Name      string
 	Hostname  string
 	Platform  string
+	Port      int
 	Username  string
 	Password  string
 	Enable    string
+	Method    string
 	StrictKey bool
 	Groups    []string
-	Connection *network.Driver
+	Connection Connector
 	Data      map[string]interface{}
 }
 
@@ -35,8 +40,26 @@ func GetHosts() Hosts {
 		host.Platform = "cisco_iosxe"
 		host.Username = "fred"
 		host.Password = "bedrock"
+		host.StrictKey = false
+		//host.Method = "scrapli_ssh"
 		host.Data["example_only"] = 100
 		hosts[host.Name] = &host
 	}
+
+	var host Host
+	host.Data = make(map[string]interface{})
+	host.Name = "sandbox"
+	host.Hostname = "sandbox-iosxe-latest-1.cisco.com"
+	host.Port = 830
+	//host.Platform = "cisco_iosxe"
+	host.Username = "developer"
+	host.Password = "C1sco12345"
+	host.Method = "scrapli_netconf"
+	host.StrictKey = false
+	host.Data["example_only"] = 100
+	hosts["sandbox"] = &host
+
+
+
 	return hosts
 }

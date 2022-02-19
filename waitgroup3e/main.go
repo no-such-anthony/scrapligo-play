@@ -22,15 +22,23 @@ func main() {
 		Name: "my first show version",
 		Kwargs: map[string]interface{} { "hello": "first"},
 		Include: map[string][]string{"name": []string{"192.168.204.101","r2"}},
+		Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
 
 	task2 := tasks.ShowVersion{
 		Name: "my second show version",
 		Kwargs: map[string]interface{} { "hello": "second"},
-		Exclude: map[string][]string{"name": []string{"192.168.204.101","r2"}},
+		Exclude: map[string][]string{"name": []string{"192.168.204.101","sandbox"}},
 	}
 
-	t := []tasks.RunTask{&task1, &task2}
+	task3 := tasks.NetconfShowVersion{
+		Name: "my netconf show version",
+		Kwargs: map[string]interface{} { "hello": "netconf"},
+		Include: map[string][]string{"name": []string{"sandbox"}},
+	}
+
+
+	t := []tasks.Tasker{&task1, &task2, &task3}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)
