@@ -23,18 +23,22 @@ func (s *NetconfShowVersion) Named() string {
 func (s *NetconfShowVersion) Run(h *inventory.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	res := make(map[string]interface{})
-	res["name"] = s.Name
+	res["task"] = s.Name
 
 	if inventory.Skip(h, s.Include, s.Exclude) {
 		res["skipped"] = true
 		return res, nil
 	}
 
-	conn, ok := h.Connection.(*connections.ScrapligoNetconf)
-	if !ok {
-		return res, fmt.Errorf("no connection method for %s", h.Hostname)	
+	conn, err := connections.GetConn(h, "scrapli_netconf")
+	if err != nil {
+		res["result"] = err
+		res["failed"] = true
+		return res, err	
 	}
-	c := conn.C
+
+	c := conn.(*connections.ScrapligoNetconf).C
+	
 
 	fmt.Printf("%v - args: %+v\n",h.Name, s.Kwargs)
 	if len(prev_results)>=1 {

@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"sync"
 	"main/app/inventory"
-	"main/app/connections"
 	"main/app/tasks"
-	//"github.com/scrapli/scrapligo/driver/network"
 )
 
 
@@ -14,44 +12,23 @@ func runTasks(h *inventory.Host, t []tasks.Tasker, rc chan<- []map[string]interf
 
 	host_results := []map[string]interface{}{}
 
-	var cc inventory.Connector
-
-	switch h.Method {
-	case "scrapli_ssh": 
-		cc = inventory.Connector(&connections.ScrapligoSsh{})
-	case "scrapli_netconf": 
-		cc = inventory.Connector(&connections.ScrapligoNetconf{})
-	default:
-		cc = inventory.Connector(&connections.ScrapligoSsh{})
-	}
-
-	err := cc.Open(h)
-	if err != nil {
-		result := make(map[string]interface{})
-		result["task"] = "connection"
-		result["result"] = err
-		result["failed"] = true
-		host_results = append(host_results, result)
-		rc <- host_results
-		return
-	}
-	h.Connection = cc
-
 	// task loop
 	for _, task := range t {
-		result := make(map[string]interface{})
+
 		res, err := task.Run(h, host_results)
+		// don't continue on error
 		if err != nil {
-			result["result"] = err
-			result["failed"] = true
-			result["task"] = task.Named()
-			host_results = append(host_results, result)
+			host_results = append(host_results, res)
 			rc <- host_results
 			return
 		}
+
 		host_results = append(host_results, res)
 	}
-	h.Connection.Close()
+
+	for _, v := range h.Connections {
+		v.Close()
+	}
 	rc <- host_results
 
 }
@@ -61,7 +38,7 @@ func Runner(hosts inventory.Hosts, t []tasks.Tasker) (map[string]interface{})  {
 
 	var wg sync.WaitGroup
 
-	num_workers := 10
+	num_workers := 20
 	guard := make(chan bool, num_workers)
 	rc := make(chan []map[string]interface{}, num_workers)
 	results := map[string]interface{}{}

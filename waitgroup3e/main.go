@@ -21,7 +21,7 @@ func main() {
 	task1 := tasks.ShowVersion{
 		Name: "my first show version",
 		Kwargs: map[string]interface{} { "hello": "first"},
-		Include: map[string][]string{"name": []string{"192.168.204.101","r2"}},
+		Include: map[string][]string{"name": []string{"192.168.204.101","no.suchdomain"}},
 		Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
 

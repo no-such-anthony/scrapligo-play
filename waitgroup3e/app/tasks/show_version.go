@@ -9,6 +9,7 @@ import (
 
 type ShowVersion struct {
 	Name string
+	Method string
 	Kwargs map[string]interface{}
 	Include map[string][]string
 	Exclude map[string][]string
@@ -32,11 +33,14 @@ func (s *ShowVersion) Run(h *inventory.Host, prev_results []map[string]interface
 		return res, nil
 	}
 
-	conn, ok := h.Connection.(*connections.ScrapligoSsh)
-	if !ok {
-		return res, fmt.Errorf("no connection method for %s", h.Hostname)	
+	conn, err := connections.GetConn(h, "scrapli_ssh")
+	if err != nil {
+		res["result"] = err
+		res["failed"] = true
+		return res, err	
 	}
-	c := conn.C
+
+	c := conn.(*connections.ScrapligoSsh).C
 
 	// ==== Custom
 
@@ -52,13 +56,26 @@ func (s *ShowVersion) Run(h *inventory.Host, prev_results []map[string]interface
 
 	rs, err := c.SendCommand(cmd)
 	if err != nil {
+		res["result"] = err
+		res["failed"] = true
 		return res, fmt.Errorf("failed to send command for %s: %+v", h.Hostname, err)
 	}
 
 	parsedOut, err := rs.TextFsmParse("../textfsm_templates/" + h.Platform + "_show_version.textfsm")
 	if err != nil || len(parsedOut) == 0 {
-		return res, fmt.Errorf("failed to parse command for %s: %+v", h.Hostname, err)
+		msg := fmt.Sprintf("failed to parse command for %s: %+v", h.Hostname, err)
+		res["result"] = msg
+		res["failed"] = true
+		return res, fmt.Errorf(msg)
 	}
+
+	if len(parsedOut) == 0 {
+		msg := fmt.Sprintf("no output from textfsm parser for %s", h.Hostname)
+		res["result"] = msg
+		res["failed"] = true
+		return res, fmt.Errorf(msg)
+	}
+
 
 	res["result"] = fmt.Sprintf("Hostname: %s\nHardware: %s\nSW Version: %s\nUptime: %s",
 				h.Hostname, parsedOut[0]["HARDWARE"],

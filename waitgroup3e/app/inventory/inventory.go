@@ -1,7 +1,6 @@
 package inventory
 
-import (
-)
+import "fmt"
 
 type Connector interface {
 	Open(*Host)  (error)
@@ -16,15 +15,33 @@ type Host struct {
 	Username  string
 	Password  string
 	Enable    string
-	Method    string
 	StrictKey bool
 	Groups    []string
-	Connection Connector
+	Connections map[string]Connector
 	Data      map[string]interface{}
 }
 
 
 type Hosts map[string]*Host
+
+// SetConnections stores a connection
+func (h *Host) SetConnection(name string, conn Connector) {
+	if h.Connections == nil {
+		h.Connections = make(map[string]Connector)
+	}
+	h.Connections[name] = conn
+}
+
+// GetConnection retrieves a connection that was previously set
+func (h *Host) GetConnection(name string) (Connector, error) {
+	if h.Connections == nil {
+		h.Connections = make(map[string]Connector)
+	}
+	if c, ok := h.Connections[name]; ok {
+		return c, nil
+	}
+	return nil, fmt.Errorf("couldn't find connection")
+}
 
 
 func GetHosts() Hosts {
@@ -41,7 +58,6 @@ func GetHosts() Hosts {
 		host.Username = "fred"
 		host.Password = "bedrock"
 		host.StrictKey = false
-		//host.Method = "scrapli_ssh"
 		host.Data["example_only"] = 100
 		hosts[host.Name] = &host
 	}
@@ -51,10 +67,9 @@ func GetHosts() Hosts {
 	host.Name = "sandbox"
 	host.Hostname = "sandbox-iosxe-latest-1.cisco.com"
 	host.Port = 830
-	//host.Platform = "cisco_iosxe"
+	host.Platform = "cisco_iosxr"
 	host.Username = "developer"
 	host.Password = "C1sco12345"
-	host.Method = "scrapli_netconf"
 	host.StrictKey = false
 	host.Data["example_only"] = 100
 	hosts["sandbox"] = &host
