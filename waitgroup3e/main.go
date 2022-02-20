@@ -24,21 +24,23 @@ func main() {
 		Include: map[string][]string{"name": []string{"192.168.204.101","no.suchdomain"}},
 		Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
+	wtask1 := tasks.ScrapliSSHWrap{Tasker: &task1}
 
 	task2 := tasks.ShowVersion{
 		Name: "my second show version",
 		Kwargs: map[string]interface{} { "hello": "second"},
 		Exclude: map[string][]string{"name": []string{"192.168.204.101","sandbox"}},
 	}
+	wtask2 := tasks.ScrapliSSHWrap{Tasker: &task2}
 
-	task3 := tasks.NetconfShowVersion{
-		Name: "my netconf show version",
+	task3 := tasks.NetconfShowRun{
+		Name: "my netconf show run",
 		Kwargs: map[string]interface{} { "hello": "netconf"},
 		Include: map[string][]string{"name": []string{"sandbox"}},
 	}
+	wtask3 := tasks.ScrapliNetconfWrap{Tasker: &task3}
 
-
-	t := []tasks.Tasker{&task1, &task2, &task3}
+	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)

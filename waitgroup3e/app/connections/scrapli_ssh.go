@@ -44,3 +44,5 @@ func (s *ScrapligoSsh) Open(h *inventory.Host) (error) {
 	return nil 
 
 }
+
+

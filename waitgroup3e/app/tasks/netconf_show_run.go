@@ -3,43 +3,31 @@ package tasks
 import (
 	"fmt"
 	"main/app/inventory"
-	"main/app/connections"
+	"github.com/scrapli/scrapligo/netconf"
 )
 
-
-type NetconfShowVersion struct {
+type NetconfShowRun struct {
 	Name string
 	Kwargs map[string]interface{}
 	Include map[string][]string
 	Exclude map[string][]string
 }
 
-
-func (s *NetconfShowVersion) Named() string {
-	return fmt.Sprint(s.Name)
+func (s *NetconfShowRun) Task() TaskBase {
+	return TaskBase{
+		Name: s.Name,
+		Include: s.Include,
+		Exclude: s.Exclude,
+	}
 }
 
+func (s *NetconfShowRun) Run(h *inventory.Host, c *netconf.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
-func (s *NetconfShowVersion) Run(h *inventory.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
-
+	// === Required
 	res := make(map[string]interface{})
 	res["task"] = s.Name
-
-	if inventory.Skip(h, s.Include, s.Exclude) {
-		res["skipped"] = true
-		return res, nil
-	}
-
-	conn, err := connections.GetConn(h, "scrapli_netconf")
-	if err != nil {
-		res["result"] = err
-		res["failed"] = true
-		return res, err	
-	}
-
-	c := conn.(*connections.ScrapligoNetconf).C
 	
-
+	// ==== Custom
 	fmt.Printf("%v - args: %+v\n",h.Name, s.Kwargs)
 	if len(prev_results)>=1 {
 		fmt.Printf("%v - previous result: %+v\n",h.Name, prev_results[len(prev_results)-1])
@@ -52,6 +40,7 @@ func (s *NetconfShowVersion) Run(h *inventory.Host, prev_results []map[string]in
 
 	res["result"] = r.Result
 
+	// === Required
 	return res, nil
 
 }

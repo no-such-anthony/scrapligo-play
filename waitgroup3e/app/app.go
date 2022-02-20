@@ -8,7 +8,7 @@ import (
 )
 
 
-func runTasks(h *inventory.Host, t []tasks.Tasker, rc chan<- []map[string]interface{}) {
+func runTasks(h *inventory.Host, t []tasks.Wrapper, rc chan<- []map[string]interface{}) {
 
 	host_results := []map[string]interface{}{}
 
@@ -34,7 +34,7 @@ func runTasks(h *inventory.Host, t []tasks.Tasker, rc chan<- []map[string]interf
 }
 
 
-func Runner(hosts inventory.Hosts, t []tasks.Tasker) (map[string]interface{})  {
+func Runner(hosts inventory.Hosts, t []tasks.Wrapper) (map[string]interface{})  {
 
 	var wg sync.WaitGroup
 

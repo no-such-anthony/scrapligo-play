@@ -3,47 +3,32 @@ package tasks
 import (
 	"fmt"
 	"main/app/inventory"
-	"main/app/connections"
+	"github.com/scrapli/scrapligo/driver/network"
 )
 
 
 type ShowVersion struct {
 	Name string
-	Method string
 	Kwargs map[string]interface{}
 	Include map[string][]string
 	Exclude map[string][]string
 }
 
-
-func (s *ShowVersion) Named() string {
-	return fmt.Sprint(s.Name)
+func (s *ShowVersion) Task() TaskBase {
+	return TaskBase{
+		Name: s.Name,
+		Include: s.Include,
+		Exclude: s.Exclude,
+	}
 }
 
-
-func (s *ShowVersion) Run(h *inventory.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
+func (s *ShowVersion) Run(h *inventory.Host, c *network.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	// === Required
-
 	res := make(map[string]interface{})
 	res["task"] = s.Name
 
-	if inventory.Skip(h, s.Include, s.Exclude) {
-		res["skipped"] = true
-		return res, nil
-	}
-
-	conn, err := connections.GetConn(h, "scrapli_ssh")
-	if err != nil {
-		res["result"] = err
-		res["failed"] = true
-		return res, err	
-	}
-
-	c := conn.(*connections.ScrapligoSsh).C
-
 	// ==== Custom
-
 	fmt.Printf("%v - args: %+v\n",h.Name, s.Kwargs)
 	if len(prev_results)>=1 {
 		fmt.Printf("%v - previous result: %+v\n",h.Name, prev_results[len(prev_results)-1])
@@ -76,13 +61,11 @@ func (s *ShowVersion) Run(h *inventory.Host, prev_results []map[string]interface
 		return res, fmt.Errorf(msg)
 	}
 
-
 	res["result"] = fmt.Sprintf("Hostname: %s\nHardware: %s\nSW Version: %s\nUptime: %s",
 				h.Hostname, parsedOut[0]["HARDWARE"],
 				parsedOut[0]["VERSION"], parsedOut[0]["UPTIME"])
 
 	// ====== Required
-
 	return res, nil
 
 }
