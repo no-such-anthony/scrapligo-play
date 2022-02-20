@@ -103,6 +103,7 @@ func main() {
 	num_workers := 2
 	guard := make(chan bool, num_workers)
 	results := make(map[string]string)
+	mux := &sync.Mutex{}
 
 	//Combining Waitgroup with a channel to restrict number of goroutines.
 	wg.Add(len(hosts))
@@ -117,7 +118,9 @@ func main() {
 				fmt.Println(err.Error())
 				res = err.Error()
 			}
+			mux.Lock()
 			results[h.Name] = res
+			mux.Unlock()
 			<-guard
 		}(host)
     
