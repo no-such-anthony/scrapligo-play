@@ -17,6 +17,12 @@ func main() {
 	hosts := inventory.GetHosts()
 	//fmt.Println(hosts)
 
+	//test global filter
+	i := map[string][]string{"name": []string{"192.168.204.101","no.suchdomain"}}
+	x := map[string][]string{"name": []string{"sandbox"}}
+	f := inventory.Filt(hosts, i, x)
+	fmt.Println(f)
+
 	//attempt at a simple playbook/runbook/taskbook in code
 	task1 := tasks.ShowVersion{
 		Name: "my first show version",

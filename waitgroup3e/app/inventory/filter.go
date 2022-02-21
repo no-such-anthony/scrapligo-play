@@ -8,6 +8,21 @@ import (
 	"os"
 )
 
+
+func Filt(i Hosts, include map[string][]string, exclude map[string][]string) Hosts {
+
+	x:= make(map[string]*Host)
+
+	for n, h := range(i) {
+		if !Skip(h, include, exclude) {
+			x[n] = h
+		}
+	}
+
+	return x
+
+}
+
 func Skip(h *Host, include map[string][]string, exclude map[string][]string) bool {
 
 	skip1 := false
