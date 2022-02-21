@@ -34,9 +34,7 @@ func (r *ScrapliSSHWrap) Run(h *inventory.Host, prev_res []map[string]interface{
 		return res, err	
 	}
 
-	//update TaskCon
 	c := conn.(*connections.ScrapligoSsh).C
-
 	res, err = r.Tasker.Run(h, c, prev_res)
 
 	return res, err

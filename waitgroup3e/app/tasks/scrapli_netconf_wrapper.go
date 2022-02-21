@@ -34,9 +34,7 @@ func (r *ScrapliNetconfWrap) Run(h *inventory.Host, prev_res []map[string]interf
 		return res, err	
 	}
 
-	//update TaskCon
 	c := conn.(*connections.ScrapligoNetconf).C
-
 	res, err = r.Tasker.Run(h, c, prev_res)
 
 	return res, err

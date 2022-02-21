@@ -40,7 +40,13 @@ func main() {
 	}
 	wtask3 := tasks.ScrapliNetconfWrap{Tasker: &task3}
 
-	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3}
+	task4 := tasks.DefaultTaskTest{
+		Name: "my default wrappered task test",
+		Kwargs: map[string]interface{} { "hello": "defaultwrapped"},
+	}
+	wtask4 := tasks.DefaultWrap{Tasker: &task4}
+
+	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)
