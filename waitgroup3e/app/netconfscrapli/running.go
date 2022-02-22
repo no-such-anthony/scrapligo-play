@@ -1,27 +1,28 @@
-package tasks
+package netconfscrapli
 
 import (
 	"fmt"
 	"main/app/inventory"
+	"main/app/tasks"
 	"github.com/scrapli/scrapligo/netconf"
 )
 
-type NetconfShowRun struct {
+type Running struct {
 	Name string
 	Kwargs map[string]interface{}
 	Include map[string][]string
 	Exclude map[string][]string
 }
 
-func (s *NetconfShowRun) Task() TaskBase {
-	return TaskBase{
+func (s *Running) Task() tasks.TaskBase {
+	return tasks.TaskBase{
 		Name: s.Name,
 		Include: s.Include,
 		Exclude: s.Exclude,
 	}
 }
 
-func (s *NetconfShowRun) Run(h *inventory.Host, c *netconf.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
+func (s *Running) Run(h *inventory.Host, c *netconf.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	// === Required
 	res := make(map[string]interface{})

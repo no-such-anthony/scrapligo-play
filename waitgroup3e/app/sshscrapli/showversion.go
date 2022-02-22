@@ -1,8 +1,9 @@
-package tasks
+package sshscrapli
 
 import (
 	"fmt"
 	"main/app/inventory"
+	"main/app/tasks"
 	"github.com/scrapli/scrapligo/driver/network"
 )
 
@@ -14,8 +15,8 @@ type ShowVersion struct {
 	Exclude map[string][]string
 }
 
-func (s *ShowVersion) Task() TaskBase {
-	return TaskBase{
+func (s *ShowVersion) Task() tasks.TaskBase {
+	return tasks.TaskBase{
 		Name: s.Name,
 		Include: s.Include,
 		Exclude: s.Exclude,

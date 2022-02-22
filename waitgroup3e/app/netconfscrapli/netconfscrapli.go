@@ -1,14 +1,14 @@
-package tasks
+package netconfscrapli
 
 import (
 	"main/app/inventory"
-	"main/app/connections"
+	"main/app/tasks"
 	"github.com/scrapli/scrapligo/netconf"
 )
 
 type ScrapliNetconfTasker interface {
 	Run(*inventory.Host, *netconf.Driver, []map[string]interface{}) (map[string]interface{}, error)
-	Task() TaskBase
+	Task() tasks.TaskBase
 }
 
 type ScrapliNetconfWrap struct {
@@ -26,7 +26,7 @@ func (r *ScrapliNetconfWrap) Run(h *inventory.Host, prev_res []map[string]interf
 		return res, nil
 	}
 
-	conn, err := connections.GetConn(h, "scrapli_netconf")
+	conn, err := GetConn(h)
 	if err != nil {
 		res["task"] = task.Name
 		res["result"] = err
@@ -34,7 +34,7 @@ func (r *ScrapliNetconfWrap) Run(h *inventory.Host, prev_res []map[string]interf
 		return res, err	
 	}
 
-	c := conn.(*connections.ScrapligoNetconf).C
+	c := conn.(*ScrapligoNetconf).C
 	res, err = r.Tasker.Run(h, c, prev_res)
 
 	return res, err

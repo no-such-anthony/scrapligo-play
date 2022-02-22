@@ -10,11 +10,6 @@ type TaskBase struct {
 	Exclude map[string][]string
 }
 
-type Tasker interface {
-	Run(*inventory.Host, []map[string]interface{}) (map[string]interface{}, error)
-	Task() TaskBase
-}
-
 type Wrapper interface {
 	Run(*inventory.Host, []map[string]interface{}) (map[string]interface{}, error)
 }

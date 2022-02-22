@@ -1,4 +1,4 @@
-package connections
+package sshscrapli
 
 import (
 	"fmt"
@@ -45,4 +45,23 @@ func (s *ScrapligoSsh) Open(h *inventory.Host) (error) {
 
 }
 
+func GetConn(h *inventory.Host) (inventory.Connector, error) {
 
+	var cc inventory.Connector
+
+	conn, err := h.GetConnection("scrapli_ssh")
+	if err == nil {
+		return conn, nil
+	}
+
+	cc = inventory.Connector(&ScrapligoSsh{})
+	err = cc.Open(h)
+
+	if err != nil {
+		return cc, err
+	}
+
+	h.SetConnection("scrapli_ssh", cc)
+	return cc, nil
+	
+}

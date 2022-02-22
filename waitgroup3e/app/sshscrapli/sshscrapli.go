@@ -1,14 +1,15 @@
-package tasks
+package sshscrapli
 
 import (
 	"main/app/inventory"
-	"main/app/connections"
+	//"main/app/connections"
+	"main/app/tasks"
 	"github.com/scrapli/scrapligo/driver/network"
 )
 
 type ScrapliSSHTasker interface {
 	Run(*inventory.Host, *network.Driver, []map[string]interface{}) (map[string]interface{}, error)
-	Task() TaskBase
+	Task() tasks.TaskBase
 }
 
 type ScrapliSSHWrap struct {
@@ -26,7 +27,7 @@ func (r *ScrapliSSHWrap) Run(h *inventory.Host, prev_res []map[string]interface{
 		return res, nil
 	}
 
-	conn, err := connections.GetConn(h, "scrapli_ssh")
+	conn, err := GetConn(h)
 	if err != nil {
 		res["task"] = task.Name
 		res["result"] = err
@@ -34,7 +35,7 @@ func (r *ScrapliSSHWrap) Run(h *inventory.Host, prev_res []map[string]interface{
 		return res, err	
 	}
 
-	c := conn.(*connections.ScrapligoSsh).C
+	c := conn.(*ScrapligoSsh).C
 	res, err = r.Tasker.Run(h, c, prev_res)
 
 	return res, err

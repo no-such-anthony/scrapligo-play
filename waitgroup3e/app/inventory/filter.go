@@ -48,7 +48,7 @@ func F_include(h *Host, when map[string][]string) bool {
 
 		loc = strings.ToLower(loc)
 		if loc == "username" || loc == "password" || loc == "enable" || loc == "strictkey" {
-			fmt.Println("I am not programmed to filter on " + loc + ".\n")
+			fmt.Println("Cannot filter on " + loc + ".\n")
 		}
 
 		//make a set to hold matches
@@ -86,7 +86,7 @@ func F_include(h *Host, when map[string][]string) bool {
 			default:
 				switch x := h.Data[loc].(type) {
 				case nil:
-					//when the data key doesn't exist
+					fmt.Printf("Filter: data key '%s' doesn't exist. Ignoring.\n", loc)
 
 				case string:
 					if r.Match([]byte(h.Data[loc].(string))) {
@@ -114,7 +114,7 @@ func F_include(h *Host, when map[string][]string) bool {
 
 				default:
 					//TODO
-					fmt.Printf("I don't know how to filter on type %T\n", x)
+					fmt.Printf("Not programmed to filter on type %T\n", x)
 					os.Exit(0)
 				} 
 			}
@@ -130,7 +130,7 @@ func F_exclude(h *Host, not_when map[string][]string) bool {
 
 		loc = strings.ToLower(loc)
 		if loc == "username" || loc == "password" || loc == "enable" || loc == "strictkey" {
-			fmt.Println("I am not programmed to filter on " + loc + ".\n")
+			fmt.Println("Cannot filter on " + loc + ".\n")
 		}
 
 		for _, f_value := range excludes {
@@ -167,7 +167,7 @@ func F_exclude(h *Host, not_when map[string][]string) bool {
 			default:
 				switch x:= h.Data[loc].(type) {
 				case nil:
-					//we don't care if the data key doesn't exist
+					fmt.Printf("Filter: data key '%s' doesn't exist. Ignoring.\n", loc)
 				case string:
 					if r.Match([]byte(h.Data[loc].(string))) {
 						return true
@@ -191,7 +191,7 @@ func F_exclude(h *Host, not_when map[string][]string) bool {
 					}
 				default:
 					//TODO
-					fmt.Printf("I don't know how to filter on type %T\n", x)
+					fmt.Printf("Not programmed to filter on type %T\n", x)
 					os.Exit(0)
 				} 
 			}

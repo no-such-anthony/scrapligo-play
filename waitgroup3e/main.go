@@ -6,6 +6,8 @@ import (
 	"time"
 	"main/app"
 	"main/app/tasks"
+	"main/app/sshscrapli"
+	"main/app/netconfscrapli"
 	"main/app/inventory"
 )
 
@@ -17,39 +19,40 @@ func main() {
 	hosts := inventory.GetHosts()
 	//fmt.Println(hosts)
 
-	//test global filter
+	//test global filter, not used in runner
 	i := map[string][]string{"name": []string{"192.168.204.101","no.suchdomain"}}
 	x := map[string][]string{"name": []string{"sandbox"}}
 	f := inventory.Filt(hosts, i, x)
 	fmt.Println(f)
 
 	//attempt at a simple playbook/runbook/taskbook in code
-	task1 := tasks.ShowVersion{
+	task1 := sshscrapli.ShowVersion{
 		Name: "my first show version",
 		Kwargs: map[string]interface{} { "hello": "first"},
 		Include: map[string][]string{"name": []string{"192.168.204.101","no.suchdomain"}},
 		Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask1 := tasks.ScrapliSSHWrap{Tasker: &task1}
+	wtask1 := sshscrapli.ScrapliSSHWrap{Tasker: &task1}
 
-	task2 := tasks.ShowVersion{
+	task2 := sshscrapli.ShowVersion{
 		Name: "my second show version",
 		Kwargs: map[string]interface{} { "hello": "second"},
 		Exclude: map[string][]string{"name": []string{"192.168.204.101","sandbox"}},
 	}
-	wtask2 := tasks.ScrapliSSHWrap{Tasker: &task2}
+	wtask2 := sshscrapli.ScrapliSSHWrap{Tasker: &task2}
 
-	task3 := tasks.NetconfShowRun{
+	task3 := netconfscrapli.Running{
 		Name: "my netconf show run",
 		Kwargs: map[string]interface{} { "hello": "netconf"},
 		Include: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask3 := tasks.ScrapliNetconfWrap{Tasker: &task3}
+	wtask3 := netconfscrapli.ScrapliNetconfWrap{Tasker: &task3}
 
 	task4 := tasks.DefaultTaskTest{
 		Name: "my default wrappered task test",
 		Kwargs: map[string]interface{} { "hello": "defaultwrapped"},
 	}
+	//default wrapper for tasks not requiring a connection
 	wtask4 := tasks.DefaultWrap{Tasker: &task4}
 
 	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4}
