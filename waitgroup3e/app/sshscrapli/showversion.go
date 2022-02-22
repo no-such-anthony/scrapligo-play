@@ -36,7 +36,7 @@ func (s *ShowVersion) Run(h *inventory.Host, c *network.Driver, prev_results []m
 	}
 
 	cmd := "show version"
-	if h.Name == "192.168.204.103" {
+	if h.Hostname == "192.168.204.103" {
 		cmd = "show dodgy command"
 	}
 

@@ -2,7 +2,10 @@ module main
 
 go 1.17
 
-require github.com/scrapli/scrapligo v0.1.2
+require (
+	github.com/scrapli/scrapligo v0.1.2
+	gopkg.in/yaml.v2 v2.4.0
+)
 
 require (
 	github.com/creack/pty v1.1.11 // indirect

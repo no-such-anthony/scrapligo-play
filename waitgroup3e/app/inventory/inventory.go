@@ -1,6 +1,11 @@
 package inventory
 
-import "fmt"
+import (
+	"fmt"
+	"io/ioutil"
+
+	"gopkg.in/yaml.v2"
+)
 
 type Connector interface {
 	Open(*Host)  (error)
@@ -44,7 +49,49 @@ func (h *Host) GetConnection(name string) (Connector, error) {
 }
 
 
-func GetHosts() Hosts {
+func GetHostsByYAML() Hosts {
+
+	var i Hosts
+	yamlFile, err := ioutil.ReadFile("app/inventory/hosts.yaml")
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = yaml.UnmarshalStrict(yamlFile, &i)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// use group creds and if empty Data map, create.
+	for h,v := range(i) {
+
+		v.Name = h
+
+		for _, g := range v.Groups {
+			if g == "gns" {
+				v.Username = "fred"
+				v.Password = "bedrock"
+				v.Platform = "cisco_iosxe"
+				v.StrictKey = false
+				break
+			} else if g == "devnet" {
+				v.Username = "developer"
+				v.Password = "C1sco12345"
+				v.Platform = "cisco_iosxe"
+				v.StrictKey = false
+				break
+			}
+		}
+
+		if len(v.Data) == 0 {
+			v.Data = make(map[string]interface{})
+		}
+	}
+	return i
+
+}
+
+
+func GetHostsByCode() Hosts {
 
 	devices := []string{"no.suchdomain","192.168.204.101","192.168.204.102","192.168.204.103","192.168.204.104"}
 	hosts := make(Hosts)

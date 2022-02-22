@@ -46,12 +46,12 @@ func F_include(h *Host, when map[string][]string) bool {
 
 	for loc, includes := range when {
 
+		hostMatch = false
+
 		loc = strings.ToLower(loc)
 		if loc == "username" || loc == "password" || loc == "enable" || loc == "strictkey" {
 			fmt.Println("Cannot filter on " + loc + ".\n")
 		}
-
-		//make a set to hold matches
 		
 		for _, f_value := range includes {
 			r := regexp.MustCompile(f_value)
@@ -86,7 +86,7 @@ func F_include(h *Host, when map[string][]string) bool {
 			default:
 				switch x := h.Data[loc].(type) {
 				case nil:
-					fmt.Printf("Filter: data key '%s' doesn't exist. Ignoring.\n", loc)
+					fmt.Printf("Filter: data key '%s' doesn't exist for '%s'. Ignoring.\n", loc, h.Name)
 
 				case string:
 					if r.Match([]byte(h.Data[loc].(string))) {
@@ -118,6 +118,9 @@ func F_include(h *Host, when map[string][]string) bool {
 					os.Exit(0)
 				} 
 			}
+		}
+		if !hostMatch {
+			break
 		}
 	}
 	return hostMatch
@@ -167,7 +170,7 @@ func F_exclude(h *Host, not_when map[string][]string) bool {
 			default:
 				switch x:= h.Data[loc].(type) {
 				case nil:
-					fmt.Printf("Filter: data key '%s' doesn't exist. Ignoring.\n", loc)
+					fmt.Printf("Filter: data key '%s' doesn't exist for '%s'. Ignoring.\n", loc, h.Name)
 				case string:
 					if r.Match([]byte(h.Data[loc].(string))) {
 						return true

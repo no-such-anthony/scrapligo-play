@@ -1,0 +1,39 @@
+r1:
+  hostname: 192.168.204.101
+  data:
+    model: WS-C3560CX-12PD-S
+    a_role: 
+      - stuff1
+      - stuff2
+  groups:
+    - gns
+r2:
+  hostname: 192.168.204.102
+  data:
+    model: FreddySwitch
+    a_number: 10
+  groups:
+    - gns
+    - test2
+r3:
+  hostname: 192.168.204.103
+  groups:
+    - gns
+  data:
+    model: DummyModel
+    a_number: 5
+    a_role:
+      - stuff2
+r4:
+  hostname: 192.168.204.104
+  groups:
+    - gns
+no.suchdomain:
+  hostname: no.suchdomain
+  groups:
+    - gns
+sandbox:
+  hostname: sandbox-iosxe-latest-1.cisco.com
+  groups:
+    - devnet
+  port: 830

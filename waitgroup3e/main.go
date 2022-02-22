@@ -16,11 +16,13 @@ func main() {
 	// To time this process
 	defer timeTrack(time.Now())
 
-	hosts := inventory.GetHosts()
+	hosts := inventory.GetHostsByYAML()
+
 	//fmt.Println(hosts)
 
 	//test global filter, not used in runner
-	i := map[string][]string{"name": []string{"192.168.204.101","no.suchdomain"}}
+	i := map[string][]string{"hostname": []string{"192.168.204.101","no.suchdomain"},
+							 "model": []string{"C3560CX"}}
 	x := map[string][]string{"name": []string{"sandbox"}}
 	f := inventory.Filt(hosts, i, x)
 	fmt.Println(f)
@@ -29,7 +31,8 @@ func main() {
 	task1 := sshscrapli.ShowVersion{
 		Name: "my first show version",
 		Kwargs: map[string]interface{} { "hello": "first"},
-		Include: map[string][]string{"name": []string{"192.168.204.101","no.suchdomain"}},
+		Include: map[string][]string{"hostname": []string{"192.168.204.101","no.suchdomain"},
+									 "model": []string{"C3560CX"}},
 		Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
 	wtask1 := sshscrapli.ScrapliSSHWrap{Tasker: &task1}
