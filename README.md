@@ -10,7 +10,7 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 - waitgroup3a - Added returning results
 - waitgroup3b - Restructure into functions
 - waitgroup3c - Attempt at a simple playbook/runbook/taskbook in code example, results placed in host struct
-- waitgroup3d - Attempt at a simple playbook/runbook/taskbook in code example, results return via channel
+- waitgroup3d - Attempt at a simple playbook/runbook/taskbook in code example, results returned from function
 - waitgroup3e - Like waitgroup3d but trying interfaces, filters, and a simple package structure (work in progress)
 - waitgroup4 - Waitgroup with semaphore to restrict number of goroutines.
 - workerpool1 - In/Out buffered channels with a boolean 'done' channel for completion.

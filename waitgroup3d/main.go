@@ -64,7 +64,7 @@ func getVersion(h *Host, kwargs map[string]interface{}, prev_results []map[strin
 }
 
 
-func runTasks(h *Host, tasks Tasks, rc chan<- []map[string]interface{}) {
+func runTasks(h *Host, tasks Tasks) ([]map[string]interface{}, error) {
 
 	host_results := []map[string]interface{}{}
 
@@ -74,8 +74,7 @@ func runTasks(h *Host, tasks Tasks, rc chan<- []map[string]interface{}) {
 		result["connection"] = err
 		result["failed"] = true
 		host_results = append(host_results, result)
-		rc <- host_results
-		return
+		return host_results, err
 	}
 	h.Connection = c
 
@@ -87,14 +86,13 @@ func runTasks(h *Host, tasks Tasks, rc chan<- []map[string]interface{}) {
 			result[task.Name] = err
 			result["failed"] = true
 			host_results = append(host_results, result)
-			rc <- host_results
-			return
+			return host_results, err
 		}
 		result[task.Name] = res
 		host_results = append(host_results, result)
 	}
 	c.Close()
-	rc <- host_results
+	return host_results, err
 
 
 }
@@ -146,9 +144,9 @@ func runner(hosts Hosts, tasks Tasks) (map[string]interface{})  {
 
 	num_workers := 7
 	guard := make(chan bool, num_workers)
-	rc := make(chan []map[string]interface{}, num_workers)
 	results := map[string]interface{}{}
 	wg.Add(len(hosts))
+	mutex := &sync.Mutex{}
 
 	//Combining Waitgroup with a channel to restrict number of goroutines.
 	//Results returned in a channel.
@@ -156,16 +154,17 @@ func runner(hosts Hosts, tasks Tasks) (map[string]interface{})  {
 		guard <- true
 		go func(h *Host) {
 			defer wg.Done()
-			runTasks(h, tasks, rc)
-			res := <-rc
+			res, err := runTasks(h, tasks)
 
 			// Print errors immediately
-			if _, ok := res[len(res)-1]["failed"]; ok {
+			if err != nil {
 				fmt.Println("error:", res)
 			}
-			//fmt.Println(res)
 
+			mutex.Lock()
 			results[h.Name] = res
+			mutex.Unlock()
+
 			<-guard
 		}(host)
 	}
