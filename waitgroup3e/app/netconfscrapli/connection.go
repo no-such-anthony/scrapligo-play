@@ -19,21 +19,27 @@ func (s ScrapligoNetconf) Close() {
 
 func (s *ScrapligoNetconf) Open(h *inventory.Host) (error) {
 
+	ncport, ok := h.Data["netconf_port"].(int)
+
+	if !ok {
+		ncport = 830
+	}
+
 	c, err := netconf.NewNetconfDriver(
 		h.Hostname,
-		base.WithPort(h.Data["netconf_port"].(int)),
+		base.WithPort(ncport),
 		base.WithAuthStrictKey(h.StrictKey),
 		base.WithAuthUsername(h.Username),
 		base.WithAuthPassword(h.Password),
 	)
 
 	if err != nil {
-		return fmt.Errorf("failed to create driver: %+v", err)
+		return fmt.Errorf("netconf: failed to create driver: %+v", err)
 	}
 
 	err = c.Open()
 	if err != nil {
-		return fmt.Errorf("failed to open driver: %+v", err)
+		return fmt.Errorf("netconf: failed to open driver: %+v", err)
 	}
 
 	s.C = c

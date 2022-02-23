@@ -52,7 +52,7 @@ func (h *Host) GetConnection(name string) (Connector, error) {
 func GetHostsByYAML() Hosts {
 
 	var i Hosts
-	yamlFile, err := ioutil.ReadFile("app/inventory/hosts.yaml")
+	yamlFile, err := ioutil.ReadFile("hosts.yaml")
 	if err != nil {
 		fmt.Println(err)
 	}

@@ -47,7 +47,7 @@ func main() {
 	task3 := netconfscrapli.Running{
 		Name: "my netconf show run",
 		Kwargs: map[string]interface{} { "hello": "netconf"},
-		Include: map[string][]string{"name": []string{"sandbox"}},
+		Include: map[string][]string{"name": []string{"sandbox","r1"}},
 	}
 	wtask3 := netconfscrapli.ScrapliNetconfWrap{Tasker: &task3}
 

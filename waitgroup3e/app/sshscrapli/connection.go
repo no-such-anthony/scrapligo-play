@@ -20,24 +20,31 @@ func (s ScrapligoSsh) Close() {
 
 func (s *ScrapligoSsh) Open(h *inventory.Host) (error) {
 
+	sshport := h.Port
+
+	if sshport == 0 {
+		sshport = 22
+	}
+
 	c, err := core.NewCoreDriver(
 		h.Hostname,
 		h.Platform,
 		base.WithAuthStrictKey(h.StrictKey),
 		base.WithAuthUsername(h.Username),
 		base.WithAuthPassword(h.Password),
+		base.WithPort(sshport),
 		//base.WithAuthSecondary(h.Enable),
 		//base.WithTransportType("standard"),
 		//base.WithSSHConfigFile("ssh_config"),
 	)
 
 	if err != nil {
-		return fmt.Errorf("failed to create driver: %+v", err)
+		return fmt.Errorf("ssh: failed to create driver: %+v", err)
 	}
 
 	err = c.Open()
 	if err != nil {
-		return fmt.Errorf("failed to open driver: %+v", err)
+		return fmt.Errorf("ssh: failed to open driver: %+v", err)
 	}
 
 	s.C = c
