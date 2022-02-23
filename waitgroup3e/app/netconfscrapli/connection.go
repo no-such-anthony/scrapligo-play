@@ -28,12 +28,12 @@ func (s *ScrapligoNetconf) Open(h *inventory.Host) (error) {
 	)
 
 	if err != nil {
-		return fmt.Errorf("failed to create driver for %s: %+v", h.Hostname, err)
+		return fmt.Errorf("failed to create driver: %+v", err)
 	}
 
 	err = c.Open()
 	if err != nil {
-		return fmt.Errorf("failed to open driver for %s: %+v", h.Hostname, err)
+		return fmt.Errorf("failed to open driver: %+v", err)
 	}
 
 	s.C = c

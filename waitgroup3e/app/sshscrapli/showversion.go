@@ -44,19 +44,19 @@ func (s *ShowVersion) Run(h *inventory.Host, c *network.Driver, prev_results []m
 	if err != nil {
 		res["result"] = err
 		res["failed"] = true
-		return res, fmt.Errorf("failed to send command for %s: %+v", h.Hostname, err)
+		return res, fmt.Errorf("failed to send command: %+v", err)
 	}
 
 	parsedOut, err := rs.TextFsmParse("../textfsm_templates/" + h.Platform + "_show_version.textfsm")
-	if err != nil || len(parsedOut) == 0 {
-		msg := fmt.Sprintf("failed to parse command for %s: %+v", h.Hostname, err)
+	if err != nil {
+		msg := fmt.Sprintf("failed to parse command: %+v", err)
 		res["result"] = msg
 		res["failed"] = true
 		return res, fmt.Errorf(msg)
 	}
 
 	if len(parsedOut) == 0 {
-		msg := fmt.Sprintf("no output from textfsm parser for %s", h.Hostname)
+		msg := "no output from textfsm parser"
 		res["result"] = msg
 		res["failed"] = true
 		return res, fmt.Errorf(msg)
