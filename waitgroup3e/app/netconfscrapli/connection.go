@@ -21,7 +21,7 @@ func (s *ScrapligoNetconf) Open(h *inventory.Host) (error) {
 
 	c, err := netconf.NewNetconfDriver(
 		h.Hostname,
-		base.WithPort(h.Port),
+		base.WithPort(h.Data["netconf_port"].(int)),
 		base.WithAuthStrictKey(h.StrictKey),
 		base.WithAuthUsername(h.Username),
 		base.WithAuthPassword(h.Password),
@@ -46,7 +46,7 @@ func GetConn(h *inventory.Host) (inventory.Connector, error) {
 
 	var cc inventory.Connector
 
-	conn, err := h.GetConnection("scrapli_ssh")
+	conn, err := h.GetConnection("scrapli_netconf")
 	if err == nil {
 		return conn, nil
 	}

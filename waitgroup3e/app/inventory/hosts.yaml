@@ -36,4 +36,6 @@ sandbox:
   hostname: sandbox-iosxe-latest-1.cisco.com
   groups:
     - devnet
-  port: 830
+  port: 22
+  data:
+    netconf_port: 830

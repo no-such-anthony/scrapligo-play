@@ -40,7 +40,7 @@ func main() {
 	task2 := sshscrapli.ShowVersion{
 		Name: "my second show version",
 		Kwargs: map[string]interface{} { "hello": "second"},
-		Exclude: map[string][]string{"name": []string{"192.168.204.101","sandbox"}},
+		Exclude: map[string][]string{"name": []string{"192.168.204.101"}},
 	}
 	wtask2 := sshscrapli.ScrapliSSHWrap{Tasker: &task2}
 
