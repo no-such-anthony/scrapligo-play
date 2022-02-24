@@ -2,7 +2,6 @@ package sshscrapli
 
 import (
 	"main/app/inventory"
-	//"main/app/connections"
 	"main/app/tasks"
 	"github.com/scrapli/scrapligo/driver/network"
 )

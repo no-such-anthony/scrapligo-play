@@ -51,7 +51,7 @@ func main() {
 	}
 	wtask3 := netconfscrapli.Wrap{Tasker: &task3}
 
-	task4 := tasks.DefaultTaskTest{
+	task4 := tasks.TaskTest{
 		Name: "my default wrappered task test",
 		Kwargs: map[string]interface{} { "hello": "defaultwrapped"},
 	}

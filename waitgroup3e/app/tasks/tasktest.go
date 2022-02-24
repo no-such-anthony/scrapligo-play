@@ -5,14 +5,14 @@ import (
 	"main/app/inventory"
 )
 
-type DefaultTaskTest struct {
+type TaskTest struct {
 	Name string
 	Kwargs map[string]interface{}
 	Include map[string][]string
 	Exclude map[string][]string
 }
 
-func (s *DefaultTaskTest) Task() TaskBase {
+func (s *TaskTest) Task() TaskBase {
 	return TaskBase{
 		Name: s.Name,
 		Include: s.Include,
@@ -20,7 +20,7 @@ func (s *DefaultTaskTest) Task() TaskBase {
 	}
 }
 
-func (s *DefaultTaskTest) Run(h *inventory.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
+func (s *TaskTest) Run(h *inventory.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	// === Required
 	res := make(map[string]interface{})
