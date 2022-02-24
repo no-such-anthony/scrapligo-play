@@ -6,16 +6,16 @@ import (
 	"github.com/scrapli/scrapligo/netconf"
 )
 
-type ScrapliNetconfTasker interface {
+type Tasker interface {
 	Run(*inventory.Host, *netconf.Driver, []map[string]interface{}) (map[string]interface{}, error)
 	Task() tasks.TaskBase
 }
 
-type ScrapliNetconfWrap struct {
-	Tasker ScrapliNetconfTasker
+type Wrap struct {
+	Tasker Tasker
 }
 
-func (r *ScrapliNetconfWrap) Run(h *inventory.Host, prev_res []map[string]interface{}) (map[string]interface{}, error) {
+func (r *Wrap) Run(h *inventory.Host, prev_res []map[string]interface{}) (map[string]interface{}, error) {
 
 	res := make(map[string]interface{})
 	task := r.Tasker.Task()

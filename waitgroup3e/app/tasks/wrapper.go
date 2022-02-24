@@ -4,16 +4,16 @@ import (
 	"main/app/inventory"
 )
 
-type DefaultTasker interface {
+type Tasker interface {
 	Run(*inventory.Host, []map[string]interface{}) (map[string]interface{}, error)
 	Task() TaskBase
 }
 
-type DefaultWrap struct {
-	Tasker DefaultTasker
+type Wrap struct {
+	Tasker Tasker
 }
 
-func (r *DefaultWrap) Run(h *inventory.Host, prev_res []map[string]interface{}) (map[string]interface{}, error) {
+func (r *Wrap) Run(h *inventory.Host, prev_res []map[string]interface{}) (map[string]interface{}, error) {
 
 	res := make(map[string]interface{})
 	task := r.Tasker.Task()

@@ -7,16 +7,16 @@ import (
 	"github.com/scrapli/scrapligo/driver/network"
 )
 
-type ScrapliSSHTasker interface {
+type Tasker interface {
 	Run(*inventory.Host, *network.Driver, []map[string]interface{}) (map[string]interface{}, error)
 	Task() tasks.TaskBase
 }
 
-type ScrapliSSHWrap struct {
-	Tasker ScrapliSSHTasker
+type Wrap struct {
+	Tasker Tasker
 }
 
-func (r *ScrapliSSHWrap) Run(h *inventory.Host, prev_res []map[string]interface{}) (map[string]interface{}, error) {
+func (r *Wrap) Run(h *inventory.Host, prev_res []map[string]interface{}) (map[string]interface{}, error) {
 
 	res := make(map[string]interface{})
 	task := r.Tasker.Task()

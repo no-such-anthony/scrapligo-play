@@ -35,28 +35,28 @@ func main() {
 									 "model": []string{"C3560CX"}},
 		Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask1 := sshscrapli.ScrapliSSHWrap{Tasker: &task1}
+	wtask1 := sshscrapli.Wrap{Tasker: &task1}
 
 	task2 := sshscrapli.ShowVersion{
 		Name: "my second show version",
 		Kwargs: map[string]interface{} { "hello": "second"},
 		Exclude: map[string][]string{"name": []string{"192.168.204.101"}},
 	}
-	wtask2 := sshscrapli.ScrapliSSHWrap{Tasker: &task2}
+	wtask2 := sshscrapli.Wrap{Tasker: &task2}
 
 	task3 := netconfscrapli.Running{
 		Name: "my netconf show run",
 		Kwargs: map[string]interface{} { "hello": "netconf"},
 		Include: map[string][]string{"name": []string{"sandbox","r1"}},
 	}
-	wtask3 := netconfscrapli.ScrapliNetconfWrap{Tasker: &task3}
+	wtask3 := netconfscrapli.Wrap{Tasker: &task3}
 
 	task4 := tasks.DefaultTaskTest{
 		Name: "my default wrappered task test",
 		Kwargs: map[string]interface{} { "hello": "defaultwrapped"},
 	}
 	//default wrapper for tasks not requiring a connection
-	wtask4 := tasks.DefaultWrap{Tasker: &task4}
+	wtask4 := tasks.Wrap{Tasker: &task4}
 
 	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4}
 	//fmt.Printf("%+v\n", t)
