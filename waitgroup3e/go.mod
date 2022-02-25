@@ -3,6 +3,7 @@ module main
 go 1.17
 
 require (
+	github.com/go-xmlfmt/xmlfmt v0.0.0-20220206211657-0a94163c4677
 	github.com/scrapli/scrapligo v0.1.2
 	gopkg.in/yaml.v2 v2.4.0
 )

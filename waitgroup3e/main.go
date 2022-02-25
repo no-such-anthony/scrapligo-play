@@ -44,9 +44,18 @@ func main() {
 	}
 	wtask2 := sshscrapli.Wrap{Tasker: &task2}
 
+	ncFilter := "" +
+	"<interfaces xmlns=\"urn:ietf:params:xml:ns:yang:ietf-interfaces\">\n" +
+	"  <interface>\n" +
+	"    <name>\n" +
+	"      GigabitEthernet1\n" +
+	"    </name>\n" +
+	"  </interface>\n" +
+	"</interfaces>"
+
 	task3 := netconfscrapli.Running{
 		Name: "my netconf show run",
-		Kwargs: map[string]interface{} { "hello": "netconf"},
+		NcFilter: ncFilter,
 		Include: map[string][]string{"name": []string{"sandbox","r1"}},
 	}
 	wtask3 := netconfscrapli.Wrap{Tasker: &task3}
