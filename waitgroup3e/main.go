@@ -28,18 +28,23 @@ func main() {
 	fmt.Println(f)
 
 	//attempt at a simple playbook/runbook/taskbook in code
-	task1 := sshscrapli.ShowVersion{
+	command := "show version"
+	textfsm := "../textfsm_templates/cisco_iosxe_show_version.textfsm"
+
+	task1 := sshscrapli.SendCommand{
 		Name: "my first show version",
-		Kwargs: map[string]interface{} { "hello": "first"},
+		Command: command,
+		Textfsm: textfsm,
 		Include: map[string][]string{"hostname": []string{"192.168.204.101","no.suchdomain"},
 									 "model": []string{"C3560CX"}},
 		Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
 	wtask1 := sshscrapli.Wrap{Tasker: &task1}
 
-	task2 := sshscrapli.ShowVersion{
+	task2 := sshscrapli.SendCommand{
 		Name: "my second show version",
-		Kwargs: map[string]interface{} { "hello": "second"},
+		Command: command,
+		Textfsm: textfsm,
 		Exclude: map[string][]string{"name": []string{"192.168.204.101"}},
 	}
 	wtask2 := sshscrapli.Wrap{Tasker: &task2}
@@ -53,9 +58,10 @@ func main() {
 	"  </interface>\n" +
 	"</interfaces>"
 
-	task3 := netconfscrapli.Running{
+	task3 := netconfscrapli.GetConfig{
 		Name: "my netconf show run",
-		NcFilter: ncFilter,
+		Type: "running",
+		Filter: ncFilter,
 		Include: map[string][]string{"name": []string{"sandbox","r1"}},
 	}
 	wtask3 := netconfscrapli.Wrap{Tasker: &task3}

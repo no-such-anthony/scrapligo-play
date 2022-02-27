@@ -8,14 +8,15 @@ import (
 	"github.com/go-xmlfmt/xmlfmt"
 )
 
-type Running struct {
+type GetConfig struct {
 	Name string
-	NcFilter string
+	Type string  	// running, startup, candidate...
+	Filter string	// netconf filter
 	Include map[string][]string
 	Exclude map[string][]string
 }
 
-func (s *Running) Task() tasks.TaskBase {
+func (s *GetConfig) Task() tasks.TaskBase {
 	return tasks.TaskBase{
 		Name: s.Name,
 		Include: s.Include,
@@ -23,14 +24,18 @@ func (s *Running) Task() tasks.TaskBase {
 	}
 }
 
-func (s *Running) Run(h *inventory.Host, c *netconf.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
+func (s *GetConfig) Run(h *inventory.Host, c *netconf.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	// === Required
 	res := make(map[string]interface{})
 	res["task"] = s.Name
 	
 	// ==== Custom
-	r, err := c.GetConfig("running", netconf.WithNetconfFilter(s.NcFilter))
+	if s.Type == "" {
+		s.Type = "running"
+	}
+
+	r, err := c.GetConfig(s.Type, netconf.WithNetconfFilter(s.Filter))
 	if err != nil {
 		return res, fmt.Errorf("failed to get config; error: %+v", err)
 	}

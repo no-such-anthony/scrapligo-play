@@ -29,7 +29,7 @@ func (s *TaskTest) Run(h *inventory.Host, prev_results []map[string]interface{})
 	// ==== Custom
 	fmt.Printf("%v - args: %+v\n",h.Name, s.Kwargs)
 	if len(prev_results)>=1 {
-		fmt.Printf("%v - previous result: %+v\n",h.Name, prev_results[len(prev_results)-1])
+			fmt.Printf("%v - previous result: %+v\n",h.Name, prev_results[len(prev_results)-1])
 	}
 
 	res["result"] = fmt.Sprintf("host %s, just chillin'", h.Name)
