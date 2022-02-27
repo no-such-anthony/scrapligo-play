@@ -8,6 +8,7 @@ import (
 	"main/app/tasks"
 	"main/app/sshscrapli"
 	"main/app/netconfscrapli"
+	"main/app/sshgomiko"
 	"main/app/inventory"
 )
 
@@ -73,7 +74,15 @@ func main() {
 	//default wrapper for tasks not requiring a connection
 	wtask4 := tasks.Wrap{Tasker: &task4}
 
-	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4}
+	task5 := sshgomiko.SendCommand{
+		Name: "my gomiko show version",
+		Command: command,
+		Textfsm: textfsm,
+		Exclude: map[string][]string{"name": []string{"192.168.204.101"}},
+	}
+	wtask5 := sshgomiko.Wrap{Tasker: &task5}
+
+	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)
