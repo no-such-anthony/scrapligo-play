@@ -8,7 +8,7 @@ import (
 )
 
 
-func runTasks(h *inventory.Host, t []tasks.Wrapper) ([]map[string]interface{}, error) {
+func runTasks(h *inventory.Host, t []tasks.Wrapper) []map[string]interface{} {
 
 	host_results := []map[string]interface{}{}
 
@@ -18,8 +18,20 @@ func runTasks(h *inventory.Host, t []tasks.Wrapper) ([]map[string]interface{}, e
 		res, err := task.Run(h, host_results)
 		// don't continue on error
 		if err != nil {
+
+			switch err.(type) {
+			case *tasks.ConnectionError:
+				fmt.Println("connection error:", err)
+			case *tasks.TaskError:
+				fmt.Println("task error:", err)
+				for _, v := range h.Connections {
+					v.Close()
+				}
+			default:
+				fmt.Println("unexpected error:", err)
+			}
 			host_results = append(host_results, res)
-			return host_results, err
+			return host_results
 		}
 
 		host_results = append(host_results, res)
@@ -29,7 +41,7 @@ func runTasks(h *inventory.Host, t []tasks.Wrapper) ([]map[string]interface{}, e
 		v.Close()
 	}
 
-	return host_results, nil
+	return host_results
 
 }
 
@@ -49,12 +61,7 @@ func Runner(hosts inventory.Hosts, t []tasks.Wrapper) (map[string]interface{})  
 		guard <- true
 		go func(h *inventory.Host) {
 			defer wg.Done()
-			res, err := runTasks(h, t)
-			// Print errors immediately
-			if err != nil {
-				fmt.Println("error:", res)
-			}
-			//fmt.Println(res)
+			res := runTasks(h, t)
 			mutex.Lock()
 			results[h.Name] = res
 			mutex.Unlock()

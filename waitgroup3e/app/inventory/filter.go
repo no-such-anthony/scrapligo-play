@@ -50,7 +50,7 @@ func F_include(h *Host, when map[string][]string) bool {
 
 		loc = strings.ToLower(loc)
 		if loc == "username" || loc == "password" || loc == "enable" || loc == "strictkey" {
-			fmt.Println("Cannot filter on " + loc + ".\n")
+			fmt.Println("filter: cannot filter on " + loc + ".\n")
 		}
 		
 		for _, f_value := range includes {
@@ -86,7 +86,7 @@ func F_include(h *Host, when map[string][]string) bool {
 			default:
 				switch x := h.Data[loc].(type) {
 				case nil:
-					fmt.Printf("Filter: data key '%s' doesn't exist for '%s'. Ignoring.\n", loc, h.Name)
+					fmt.Printf("filter: data key '%s' doesn't exist for '%s'. ignoring.\n", loc, h.Name)
 
 				case string:
 					if r.Match([]byte(h.Data[loc].(string))) {
@@ -114,7 +114,7 @@ func F_include(h *Host, when map[string][]string) bool {
 
 				default:
 					//TODO
-					fmt.Printf("Not programmed to filter on type %T\n", x)
+					fmt.Printf("filter: not programmed to filter on type %T\n", x)
 					os.Exit(0)
 				} 
 			}
@@ -133,7 +133,7 @@ func F_exclude(h *Host, not_when map[string][]string) bool {
 
 		loc = strings.ToLower(loc)
 		if loc == "username" || loc == "password" || loc == "enable" || loc == "strictkey" {
-			fmt.Println("Cannot filter on " + loc + ".\n")
+			fmt.Println("filter: cannot filter on " + loc + ".\n")
 		}
 
 		for _, f_value := range excludes {
@@ -170,7 +170,7 @@ func F_exclude(h *Host, not_when map[string][]string) bool {
 			default:
 				switch x:= h.Data[loc].(type) {
 				case nil:
-					fmt.Printf("Filter: data key '%s' doesn't exist for '%s'. Ignoring.\n", loc, h.Name)
+					fmt.Printf("filter: data key '%s' doesn't exist for '%s'. ignoring.\n", loc, h.Name)
 				case string:
 					if r.Match([]byte(h.Data[loc].(string))) {
 						return true
@@ -194,7 +194,7 @@ func F_exclude(h *Host, not_when map[string][]string) bool {
 					}
 				default:
 					//TODO
-					fmt.Printf("Not programmed to filter on type %T\n", x)
+					fmt.Printf("filter: not programmed to filter on type %T\n", x)
 					os.Exit(0)
 				} 
 			}

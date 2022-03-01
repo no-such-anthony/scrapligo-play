@@ -25,7 +25,10 @@ func (r *Wrap) Run(h *inventory.Host, prev_res []map[string]interface{}) (map[st
 	}
 
 	res, err := r.Tasker.Run(h, prev_res)
+	if err != nil {
+		return res, &TaskError{task.Name, h.Name, err}
+	}
 
-	return res, err
+	return res, nil
 
 }

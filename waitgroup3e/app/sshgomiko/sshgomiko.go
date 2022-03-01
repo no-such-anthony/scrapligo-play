@@ -3,6 +3,7 @@ package sshgomiko
 import (
 	"main/app/inventory"
 	"main/app/tasks"
+
 	"github.com/Ali-aqrabawi/gomiko/pkg/types"
 )
 
@@ -31,12 +32,15 @@ func (r *Wrap) Run(h *inventory.Host, prev_res []map[string]interface{}) (map[st
 		res["task"] = task.Name
 		res["result"] = err
 		res["failed"] = true
-		return res, err	
+		return res, &tasks.ConnectionError{h.Name, err}
 	}
 
 	c := conn.(*GomikoSsh).C
 	res, err = r.Tasker.Run(h, c, prev_res)
+	if err != nil {
+		return res, &tasks.TaskError{task.Name, h.Name, err}
+	}
 
-	return res, err
+	return res, nil
 
 }
