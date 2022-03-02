@@ -71,7 +71,8 @@ func main() {
 		Name: "my default wrappered task test",
 		Kwargs: map[string]interface{} { "hello": "defaultwrapped"},
 	}
-	//default wrapper for tasks not requiring a connection
+	//tasks.Wrap is default wrapper for tasks not requiring one of the pre-configured connections
+	//but nothing stopping you from adding to your task.
 	wtask4 := tasks.Wrap{Tasker: &task4}
 
 	task5 := sshgomiko.SendCommand{
@@ -82,7 +83,13 @@ func main() {
 	}
 	wtask5 := sshgomiko.Wrap{Tasker: &task5}
 
-	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5}
+	task6 := tasks.TestRestConf{
+		Name: "my restconf test",
+		Include: map[string][]string{"name": []string{"sandbox"}},
+	}
+	wtask6 := tasks.Wrap{Tasker: &task6}
+
+	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5, &wtask6}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)

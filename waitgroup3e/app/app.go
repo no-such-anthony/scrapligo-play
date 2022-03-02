@@ -62,6 +62,7 @@ func Runner(hosts inventory.Hosts, t []tasks.Wrapper) (map[string]interface{})  
 		go func(h *inventory.Host) {
 			defer wg.Done()
 			res := runTasks(h, t)
+			fmt.Println("runner: " + h.Name + " completed tasks.")
 			mutex.Lock()
 			results[h.Name] = res
 			mutex.Unlock()
