@@ -85,6 +85,7 @@ func main() {
 
 	task6 := tasks.TestRestConf{
 		Name: "my restconf test",
+		Filter: "interface",
 		Include: map[string][]string{"name": []string{"sandbox"}},
 	}
 	wtask6 := tasks.Wrap{Tasker: &task6}

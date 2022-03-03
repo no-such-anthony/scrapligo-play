@@ -10,6 +10,7 @@ import (
 
 type TestRestConf struct {
 	Name string
+	Filter string	// restconf filter
 	Include map[string][]string
 	Exclude map[string][]string
 }
@@ -33,7 +34,8 @@ func (s *TestRestConf) Run(h *inventory.Host, prev_results []map[string]interfac
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: certInfo}
-	url := "https://" + h.Hostname + ":443/restconf/data/Cisco-IOS-XE-native:native?content=config&depth=65535"
+	url := "https://" + h.Hostname + ":443/restconf/data/Cisco-IOS-XE-native:native/" + 
+				s.Filter + "?content=config&depth=65535"
 
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Content-Type", "application/yang-data+json")
