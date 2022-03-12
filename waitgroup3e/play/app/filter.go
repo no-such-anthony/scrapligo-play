@@ -1,5 +1,4 @@
-package inventory
-
+package app
 import (
 	"fmt"
 	"strings"

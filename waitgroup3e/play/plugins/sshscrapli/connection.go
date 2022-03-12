@@ -2,7 +2,7 @@ package sshscrapli
 
 import (
 	"fmt"
-	"main/app/inventory"
+	"main/play/app"
 	"github.com/scrapli/scrapligo/driver/base"
 	"github.com/scrapli/scrapligo/driver/core"
 	"github.com/scrapli/scrapligo/driver/network"
@@ -18,7 +18,7 @@ func (s ScrapligoSsh) Close() {
 }
 
 
-func (s *ScrapligoSsh) Open(h *inventory.Host) (error) {
+func (s *ScrapligoSsh) Open(h *app.Host) (error) {
 
 	sshport := h.Port
 
@@ -52,16 +52,16 @@ func (s *ScrapligoSsh) Open(h *inventory.Host) (error) {
 
 }
 
-func GetConn(h *inventory.Host) (inventory.Connector, error) {
+func GetConn(h *app.Host) (app.Connector, error) {
 
-	var cc inventory.Connector
+	var cc app.Connector
 
 	conn, err := h.GetConnection("scrapli_ssh")
 	if err == nil {
 		return conn, nil
 	}
 
-	cc = inventory.Connector(&ScrapligoSsh{})
+	cc = app.Connector(&ScrapligoSsh{})
 	err = cc.Open(h)
 
 	if err != nil {

@@ -2,7 +2,7 @@ package netconfscrapli
 
 import (
 	"fmt"
-	"main/app/inventory"
+	"main/play/app"
 	"github.com/scrapli/scrapligo/driver/base"
 	"github.com/scrapli/scrapligo/netconf"
 )
@@ -17,7 +17,7 @@ func (s ScrapligoNetconf) Close() {
 }
 
 
-func (s *ScrapligoNetconf) Open(h *inventory.Host) (error) {
+func (s *ScrapligoNetconf) Open(h *app.Host) (error) {
 
 	ncport, ok := h.Data["netconf_port"].(int)
 
@@ -48,16 +48,16 @@ func (s *ScrapligoNetconf) Open(h *inventory.Host) (error) {
 }
 
 
-func GetConn(h *inventory.Host) (inventory.Connector, error) {
+func GetConn(h *app.Host) (app.Connector, error) {
 
-	var cc inventory.Connector
+	var cc app.Connector
 
 	conn, err := h.GetConnection("scrapli_netconf")
 	if err == nil {
 		return conn, nil
 	}
 
-	cc = inventory.Connector(&ScrapligoNetconf{})
+	cc = app.Connector(&ScrapligoNetconf{})
 	err = cc.Open(h)
 
 	if err != nil {

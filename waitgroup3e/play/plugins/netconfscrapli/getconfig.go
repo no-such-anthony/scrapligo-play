@@ -2,8 +2,7 @@ package netconfscrapli
 
 import (
 	"fmt"
-	"main/app/inventory"
-	"main/app/tasks"
+	"main/play/app"
 	"github.com/scrapli/scrapligo/netconf"
 	"github.com/go-xmlfmt/xmlfmt"
 )
@@ -16,15 +15,15 @@ type GetConfig struct {
 	Exclude map[string][]string
 }
 
-func (s *GetConfig) Task() tasks.TaskBase {
-	return tasks.TaskBase{
+func (s *GetConfig) Task() app.TaskBase {
+	return app.TaskBase{
 		Name: s.Name,
 		Include: s.Include,
 		Exclude: s.Exclude,
 	}
 }
 
-func (s *GetConfig) Run(h *inventory.Host, c *netconf.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
+func (s *GetConfig) Run(h *app.Host, c *netconf.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	// === Required
 	res := make(map[string]interface{})

@@ -4,12 +4,11 @@ package main
 import (
 	"fmt"
 	"time"
-	"main/app"
-	"main/app/tasks"
-	"main/app/sshscrapli"
-	"main/app/netconfscrapli"
-	"main/app/sshgomiko"
-	"main/app/inventory"
+	"main/play/app"
+	"main/play/plugins/sshscrapli"
+	"main/play/plugins/netconfscrapli"
+	"main/play/plugins/sshgomiko"
+	"main/play/plugins/other"
 )
 
 
@@ -17,7 +16,7 @@ func main() {
 	// To time this process
 	defer timeTrack(time.Now())
 
-	hosts := inventory.GetHostsByYAML()
+	hosts := app.GetHostsByYAML()
 
 	//fmt.Println(hosts)
 
@@ -25,7 +24,7 @@ func main() {
 	i := map[string][]string{"hostname": []string{"192.168.204.101","no.suchdomain"},
 							 "model": []string{"C3560CX"}}
 	x := map[string][]string{"name": []string{"sandbox"}}
-	f := inventory.Filt(hosts, i, x)
+	f := app.Filt(hosts, i, x)
 	fmt.Println(f)
 
 	//attempt at a simple playbook/runbook/taskbook in code
@@ -67,13 +66,13 @@ func main() {
 	}
 	wtask3 := netconfscrapli.Wrap{Tasker: &task3}
 
-	task4 := tasks.TaskTest{
+	task4 := other.TaskTest{
 		Name: "my default wrappered task test",
 		Kwargs: map[string]interface{} { "hello": "defaultwrapped"},
 	}
 	//tasks.Wrap is default wrapper for tasks not requiring one of the pre-configured connections
 	//but nothing stopping you from adding to your task.
-	wtask4 := tasks.Wrap{Tasker: &task4}
+	wtask4 := app.Wrap{Tasker: &task4}
 
 	task5 := sshgomiko.SendCommand{
 		Name: "my gomiko show version",
@@ -83,14 +82,14 @@ func main() {
 	}
 	wtask5 := sshgomiko.Wrap{Tasker: &task5}
 
-	task6 := tasks.TestRestConf{
+	task6 := other.TestRestConf{
 		Name: "my restconf test",
 		Filter: "interface",
 		Include: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask6 := tasks.Wrap{Tasker: &task6}
+	wtask6 := app.Wrap{Tasker: &task6}
 
-	t := []tasks.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5, &wtask6}
+	t := []app.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5, &wtask6}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)

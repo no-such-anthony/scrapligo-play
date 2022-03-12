@@ -1,8 +1,8 @@
-package tasks
+package other
 
 import (
 	"fmt"
-	"main/app/inventory"
+	"main/play/app"
 )
 
 type TaskTest struct {
@@ -12,15 +12,15 @@ type TaskTest struct {
 	Exclude map[string][]string
 }
 
-func (s *TaskTest) Task() TaskBase {
-	return TaskBase{
+func (s *TaskTest) Task() app.TaskBase {
+	return app.TaskBase{
 		Name: s.Name,
 		Include: s.Include,
 		Exclude: s.Exclude,
 	}
 }
 
-func (s *TaskTest) Run(h *inventory.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
+func (s *TaskTest) Run(h *app.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	// === Required
 	res := make(map[string]interface{})

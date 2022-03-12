@@ -2,7 +2,7 @@ package sshgomiko
 
 import (
 	"fmt"
-	"main/app/inventory"
+	"main/play/app"
 	"github.com/Ali-aqrabawi/gomiko/pkg"
 	"github.com/Ali-aqrabawi/gomiko/pkg/types"
 )
@@ -17,7 +17,7 @@ func (s GomikoSsh) Close() {
 }
 
 
-func (s *GomikoSsh) Open(h *inventory.Host) (error) {
+func (s *GomikoSsh) Open(h *app.Host) (error) {
 
 	sshport := h.Port
 
@@ -41,16 +41,16 @@ func (s *GomikoSsh) Open(h *inventory.Host) (error) {
 
 }
 
-func GetConn(h *inventory.Host) (inventory.Connector, error) {
+func GetConn(h *app.Host) (app.Connector, error) {
 
-	var cc inventory.Connector
+	var cc app.Connector
 
 	conn, err := h.GetConnection("gomiko_ssh")
 	if err == nil {
 		return conn, nil
 	}
 
-	cc = inventory.Connector(&GomikoSsh{})
+	cc = app.Connector(&GomikoSsh{})
 	err = cc.Open(h)
 
 	if err != nil {

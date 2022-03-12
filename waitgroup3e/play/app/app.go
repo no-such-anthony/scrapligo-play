@@ -3,12 +3,10 @@ package app
 import (
 	"fmt"
 	"sync"
-	"main/app/inventory"
-	"main/app/tasks"
 )
 
 
-func runTasks(h *inventory.Host, t []tasks.Wrapper) []map[string]interface{} {
+func runTasks(h *Host, t []Wrapper) []map[string]interface{} {
 
 	host_results := []map[string]interface{}{}
 
@@ -20,9 +18,9 @@ func runTasks(h *inventory.Host, t []tasks.Wrapper) []map[string]interface{} {
 		if err != nil {
 
 			switch err.(type) {
-			case *tasks.ConnectionError:
+			case *ConnectionError:
 				fmt.Println("connection error:", err)
-			case *tasks.TaskError:
+			case *TaskError:
 				fmt.Println("task error:", err)
 				for _, v := range h.Connections {
 					v.Close()
@@ -46,7 +44,7 @@ func runTasks(h *inventory.Host, t []tasks.Wrapper) []map[string]interface{} {
 }
 
 
-func Runner(hosts inventory.Hosts, t []tasks.Wrapper) (map[string]interface{})  {
+func Runner(hosts Hosts, t []Wrapper) (map[string]interface{})  {
 
 	var wg sync.WaitGroup
 
@@ -59,7 +57,7 @@ func Runner(hosts inventory.Hosts, t []tasks.Wrapper) (map[string]interface{})  
 	//Combining Waitgroup with a channel to restrict number of goroutines.
 	for _, host := range hosts {
 		guard <- true
-		go func(h *inventory.Host) {
+		go func(h *Host) {
 			defer wg.Done()
 			res := runTasks(h, t)
 			fmt.Println("runner: " + h.Name + " completed tasks.")

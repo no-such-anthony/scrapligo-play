@@ -3,8 +3,7 @@ package sshgomiko
 import (
 	"fmt"
 	"io/ioutil"
-	"main/app/inventory"
-	"main/app/tasks"
+	"main/play/app"
 	"github.com/Ali-aqrabawi/gomiko/pkg/types"
 	"github.com/sirikothe/gotextfsm"
 )
@@ -19,15 +18,15 @@ type SendCommand struct {
 	Exclude map[string][]string
 }
 
-func (s *SendCommand) Task() tasks.TaskBase {
-	return tasks.TaskBase{
+func (s *SendCommand) Task() app.TaskBase {
+	return app.TaskBase{
 		Name: s.Name,
 		Include: s.Include,
 		Exclude: s.Exclude,
 	}
 }
 
-func (s *SendCommand) Run(h *inventory.Host, c types.Device, prev_results []map[string]interface{}) (map[string]interface{}, error) {
+func (s *SendCommand) Run(h *app.Host, c types.Device, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	// === Required
 	res := make(map[string]interface{})

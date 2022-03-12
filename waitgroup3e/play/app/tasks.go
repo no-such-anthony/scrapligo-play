@@ -1,8 +1,5 @@
-package tasks
+package app
 
-import (
-	"main/app/inventory"
-)
 
 type TaskBase struct {
 	Name string
@@ -11,7 +8,7 @@ type TaskBase struct {
 }
 
 type Wrapper interface {
-	Run(*inventory.Host, []map[string]interface{}) (map[string]interface{}, error)
+	Run(*Host, []map[string]interface{}) (map[string]interface{}, error)
 }
 
 type ConnectionError struct {

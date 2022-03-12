@@ -2,8 +2,7 @@ package sshscrapli
 
 import (
 	"fmt"
-	"main/app/inventory"
-	"main/app/tasks"
+	"main/play/app"
 	"github.com/scrapli/scrapligo/driver/network"
 )
 
@@ -16,15 +15,15 @@ type SendCommand struct {
 	Exclude map[string][]string
 }
 
-func (s *SendCommand) Task() tasks.TaskBase {
-	return tasks.TaskBase{
+func (s *SendCommand) Task() app.TaskBase {
+	return app.TaskBase{
 		Name: s.Name,
 		Include: s.Include,
 		Exclude: s.Exclude,
 	}
 }
 
-func (s *SendCommand) Run(h *inventory.Host, c *network.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
+func (s *SendCommand) Run(h *app.Host, c *network.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	// === Required
 	res := make(map[string]interface{})

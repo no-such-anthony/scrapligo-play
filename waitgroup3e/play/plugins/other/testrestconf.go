@@ -1,8 +1,8 @@
-package tasks
+package other
 
 import (
 	"fmt"
-	"main/app/inventory"
+	"main/play/app"
 	"crypto/tls"
 	"io/ioutil"
 	"net/http"
@@ -15,15 +15,15 @@ type TestRestConf struct {
 	Exclude map[string][]string
 }
 
-func (s *TestRestConf) Task() TaskBase {
-	return TaskBase{
+func (s *TestRestConf) Task() app.TaskBase {
+	return app.TaskBase{
 		Name: s.Name,
 		Include: s.Include,
 		Exclude: s.Exclude,
 	}
 }
 
-func (s *TestRestConf) Run(h *inventory.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
+func (s *TestRestConf) Run(h *app.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
 	// === Required
 	res := make(map[string]interface{})
