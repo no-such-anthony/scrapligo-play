@@ -16,7 +16,7 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
     - think https://refactoring.guru/design-patterns/decorator/go/example
     - solves the interface connector casting problem
   - filters
-  - simple package structure
+  - simple package structure (after many iterations this now looks like gornir)
   - as well as scrapligo, added gomiko and restconf examples
   - still work in progress
 - waitgroup4 - Waitgroup with semaphore to restrict number of goroutines.
