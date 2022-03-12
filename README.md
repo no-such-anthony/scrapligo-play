@@ -12,11 +12,13 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 - waitgroup3c - Attempt at a simple playbook/runbook/taskbook in code example, results placed in host struct
 - waitgroup3d - Attempt at a simple playbook/runbook/taskbook in code example, results returned from function
 - waitgroup3e - Like waitgroup3d but 
-</pre>- interface decorators for task interfaces (https://refactoring.guru/design-patterns/decorator/go/example)
-</pre>- filters
-</pre>- simple package structure
-</pre>- as well as scrapligo, added gomiko and restconf examples
-</pre>- still work in progress
+  - interface decorators for task interfaces
+    - think https://refactoring.guru/design-patterns/decorator/go/example
+    - solves the interface connector casting problem
+  - filters
+  - simple package structure
+  - as well as scrapligo, added gomiko and restconf examples
+  - still work in progress
 - waitgroup4 - Waitgroup with semaphore to restrict number of goroutines.
 - workerpool1 - In/Out buffered channels with a boolean 'done' channel for completion.
 - workerpool2 - In/Out buffered channels with a results returned channel.
