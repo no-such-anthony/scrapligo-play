@@ -9,6 +9,7 @@ import (
 	"main/play/plugins/netconfscrapli"
 	"main/play/plugins/sshgomiko"
 	"main/play/plugins/other"
+	"main/play/plugins/inventory"
 )
 
 
@@ -16,7 +17,7 @@ func main() {
 	// To time this process
 	defer timeTrack(time.Now())
 
-	hosts := app.GetHostsByYAML()
+	hosts := inventory.GetHostsByYAML()
 
 	//fmt.Println(hosts)
 
