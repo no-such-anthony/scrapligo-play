@@ -4,7 +4,7 @@ I could have had the tests and collectors with the same package name.  I decided
 
 Speaking of the functions that return the anonymous test functions, although it didn't need to, I've named them like you would in a proper test function, but with a lower case 't' so that it can never be automatically run by 'go test'.
 
-This uses sub-tests so I think you need at least Go1.17.  The first level is a loop through the hosts, the second level is a loop through the each task, and you can have further levels within the task, like in testBgp.
+This uses sub-tests so I think you need at least Go1.17.  The first level is the test function itself, the second is a loop through the hosts, the third is a loop through the each task, and you can have further levels within loops of the task, like in testBgp.
 
 It needs a better way of packaging, but this is primarily a proof of concept only.
 
