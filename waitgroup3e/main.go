@@ -8,6 +8,7 @@ import (
 	"main/play/plugins/sshscrapli"
 	"main/play/plugins/netconfscrapli"
 	"main/play/plugins/sshgomiko"
+	"main/play/plugins/sshnetrasp"
 	"main/play/plugins/other"
 	"main/play/plugins/inventory"
 )
@@ -90,7 +91,15 @@ func main() {
 	}
 	wtask6 := app.Wrap{Tasker: &task6}
 
-	t := []app.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5, &wtask6}
+	task7 := sshnetrasp.SendCommand{
+		Name: "my first show version in netrasp",
+		Command: command,
+		Textfsm: textfsm,
+		Exclude: map[string][]string{"name": []string{"sandbox"}},
+	}
+	wtask7 := sshnetrasp.Wrap{Tasker: &task7}
+
+	t := []app.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5, &wtask6, &wtask7}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)

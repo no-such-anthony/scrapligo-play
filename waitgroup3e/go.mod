@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/Ali-aqrabawi/gomiko v0.0.2-0.20210915132629-edc22679ae20
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20220206211657-0a94163c4677
+	github.com/networklore/netrasp v0.0.0-20210423055811-2a6631e4fc36
 	github.com/scrapli/scrapligo v0.1.2
 	github.com/sirikothe/gotextfsm v1.0.0
 	gopkg.in/yaml.v2 v2.4.0

@@ -17,7 +17,7 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
     - solves the connector interface casting problem for different connection methods
   - filters
   - simple package structure (after many iterations this now looks like gornir)
-  - as well as scrapligo (ssh/netconf), added gomiko and restconf examples
+  - as well as scrapligo (ssh/netconf), added gomiko, netrasp, and restconf examples
   - still work in progress
 - waitgroup4 - Waitgroup with semaphore to restrict number of goroutines.
 - workerpool1 - In/Out buffered channels with a boolean 'done' channel for completion.
