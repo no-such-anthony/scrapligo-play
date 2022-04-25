@@ -3,11 +3,11 @@ package sshnetrasp
 import (
 	"fmt"
 	"io/ioutil"
+	"context"
+	//"time"
 	"main/play/app"
 	"github.com/networklore/netrasp/pkg/netrasp"
 	"github.com/sirikothe/gotextfsm"
-	"context"
-	//"time"
 )
 
 
@@ -41,7 +41,6 @@ func (s *SendCommand) Run(h *app.Host, c netrasp.Platform, prev_results []map[st
 		res["failed"] = true
 		return res, fmt.Errorf("SendCommand: no command to run")
 	}
-
 
 	//ctx, cancelRun := context.WithTimeout(context.Background(), 1000*time.Millisecond)
 	//defer cancelRun()

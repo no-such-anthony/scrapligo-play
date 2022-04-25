@@ -27,7 +27,7 @@ func main() {
 							 "model": []string{"C3560CX"}}
 	x := map[string][]string{"name": []string{"sandbox"}}
 	f := app.Filt(hosts, i, x)
-	fmt.Println(f)
+	fmt.Println("Filter test:", f)
 
 	//attempt at a simple playbook/runbook/taskbook in code
 	command := "show version"

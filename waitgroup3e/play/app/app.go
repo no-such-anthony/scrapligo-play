@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"sync"
+	"strings"
 )
 
 
@@ -19,14 +20,14 @@ func runTasks(h *Host, t []Wrapper) []map[string]interface{} {
 
 			switch err.(type) {
 			case *ConnectionError:
-				fmt.Println("connection error:", err)
+				fmt.Println("error:", strings.TrimSuffix(err.Error(), "\n"))
 			case *TaskError:
-				fmt.Println("task error:", err)
-				for _, v := range h.Connections {
-					v.Close()
-				}
+				fmt.Println("error:", strings.TrimSuffix(err.Error(), "\n"))
 			default:
-				fmt.Println("unexpected error:", err)
+				fmt.Println("error:", strings.TrimSuffix(err.Error(), "\n"))
+			}
+			for _, v := range h.Connections {
+				v.Close()
 			}
 			host_results = append(host_results, res)
 			return host_results

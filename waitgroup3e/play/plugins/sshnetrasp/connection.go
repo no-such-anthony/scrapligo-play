@@ -2,10 +2,10 @@ package sshnetrasp
 
 import (
 	"fmt"
-	"main/play/app"
-	"github.com/networklore/netrasp/pkg/netrasp"
 	"context"
 	"time"
+	"main/play/app"
+	"github.com/networklore/netrasp/pkg/netrasp"
 )
 
 type NetraspSsh struct {
@@ -36,7 +36,7 @@ func (s *NetraspSsh) Open(h *app.Host) (error) {
 		return fmt.Errorf("unable to create client: %v", err)
 	}
 
-	ctx, cancelOpen := context.WithTimeout(context.Background(), 2000*time.Millisecond)
+	ctx, cancelOpen := context.WithTimeout(context.Background(), 5000*time.Millisecond)
 	defer cancelOpen()
 	err = device.Dial(ctx)
 	if err != nil {
