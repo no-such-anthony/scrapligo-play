@@ -30,8 +30,6 @@ func (s *SendCommand) Run(h *app.Host, c *network.Driver, prev_results []map[str
 	res["task"] = s.Name
 
 	// ==== Custom
-
-	panic("fred")
 	if s.Command == "" {
 		res["result"] = "SendCommand: no command to run"
 		res["failed"] = true
