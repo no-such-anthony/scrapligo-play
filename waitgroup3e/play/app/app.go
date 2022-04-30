@@ -17,15 +17,7 @@ func runTasks(h *Host, t []Wrapper) []map[string]interface{} {
 		res, err := task.Run(h, host_results)
 		// don't continue on error
 		if err != nil {
-
-			switch err.(type) {
-			case *ConnectionError:
-				fmt.Println("error:", strings.TrimSuffix(err.Error(), "\n"))
-			case *TaskError:
-				fmt.Println("error:", strings.TrimSuffix(err.Error(), "\n"))
-			default:
-				fmt.Println("error:", strings.TrimSuffix(err.Error(), "\n"))
-			}
+			fmt.Println("error:", strings.TrimSuffix(err.Error(), "\n"))
 			for _, v := range h.Connections {
 				v.Close()
 			}

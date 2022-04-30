@@ -19,7 +19,6 @@ type Wrap struct {
 func (r *Wrap) Run(h *app.Host, prev_res []map[string]interface{}) (res map[string]interface{}, wrapErr error) {
 
 	res = make(map[string]interface{})
-	//var wrapErr error
 	task := r.Tasker.Task()
 	res["task"] = task.Name
 	wrapErr = nil
@@ -38,11 +37,11 @@ func (r *Wrap) Run(h *app.Host, prev_res []map[string]interface{}) (res map[stri
 			// find out what the panic was and set wrapErr
 			switch x := err.(type) {
 			case string:
-				wrapErr = fmt.Errorf(x)
+				wrapErr = &app.TaskError{task.Name, h.Name, fmt.Errorf(x)}
 			case error:
-				wrapErr = x
+				wrapErr = &app.TaskError{task.Name, h.Name, x}
 			default:
-				wrapErr = fmt.Errorf("Unknown panic")
+				wrapErr = &app.TaskError{task.Name, h.Name, fmt.Errorf("unknown panic")}
 			}
 		}
 	}()
@@ -51,7 +50,7 @@ func (r *Wrap) Run(h *app.Host, prev_res []map[string]interface{}) (res map[stri
 	if err != nil {
 		res["result"] = err
 		res["failed"] = true
-		return res, &app.ConnectionError{h.Name, err}
+		return res, &app.TaskError{task.Name, h.Name, err}
 	}
 
 	c := conn.(*NetraspSsh).C
