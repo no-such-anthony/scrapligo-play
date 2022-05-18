@@ -1,5 +1,5 @@
 package main
-// A netrasp only example
+// a netrasp plugin only example
 
 import (
 	"fmt"

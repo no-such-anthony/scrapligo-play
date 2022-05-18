@@ -1,6 +1,6 @@
 package main
-// A netrasp only example
-// Creating your own task within your script
+// a netrasp plugin only example
+// creating your own task within your script
 
 import (
 	"fmt"

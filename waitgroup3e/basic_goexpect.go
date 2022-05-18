@@ -1,11 +1,11 @@
 package main
-// a go ssh plugin only example
+// a ssh goexpect plugin only example
 
 import (
 	"fmt"
 	"time"
 	"main/play/app"
-	"main/play/plugins/sshgo"
+	"main/play/plugins/sshgoexpect"
 	"main/play/plugins/inventory"
 )
 
@@ -19,12 +19,12 @@ func main() {
 
 	command := "show version"
 
-	task1 := sshgo.SendCommand{
-		Name: "a show version in go built-in ssh",
+	task1 := sshgoexpect.SendCommand{
+		Name: "a show version in goexpect/ssh",
 		Command: command,
 		//Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask1 := sshgo.Wrap{Tasker: &task1}
+	wtask1 := sshgoexpect.Wrap{Tasker: &task1}
 
 	t := []app.Wrapper{&wtask1}
 	//fmt.Printf("%+v\n", t)

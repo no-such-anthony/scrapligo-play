@@ -15,9 +15,18 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
   - interface decorators for task interfaces
     - think https://refactoring.guru/design-patterns/decorator/go/example
     - solves the connector interface casting problem for different connection methods
-  - filters
+  - basic inventory
+  - filter
   - simple package structure (after many iterations this now looks like gornir)
-  - as well as scrapligo (ssh/netconf), added gomiko, netrasp, and restconf examples
+  - connection plugins
+    - scrapligo (ssh/netconf)
+    - gomiko
+    - netrasp
+    - go ssh
+    - go expect
+      - which breaks Windows, so moved to using WSL/Ubuntu
+      - also, no interact() which would have been cool
+  - restconf example
   - still work in progress
 - waitgroup4 - Waitgroup with semaphore to restrict number of goroutines.
 - workerpool1 - In/Out buffered channels with a boolean 'done' channel for completion.
