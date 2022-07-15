@@ -3,7 +3,7 @@ package netconfscrapli
 import (
 	"fmt"
 	"main/play/app"
-	"github.com/scrapli/scrapligo/netconf"
+	"github.com/scrapli/scrapligo/driver/netconf"
 )
 
 type Tasker interface {

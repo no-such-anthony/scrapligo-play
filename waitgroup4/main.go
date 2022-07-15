@@ -7,8 +7,8 @@ import (
 	"golang.org/x/sync/semaphore"
 	"sync"
 	"context"
-	"github.com/scrapli/scrapligo/driver/base"
-	"github.com/scrapli/scrapligo/driver/core"
+	"github.com/scrapli/scrapligo/driver/options"
+	"github.com/scrapli/scrapligo/platform"
 )
 
 type Host struct {
@@ -30,20 +30,24 @@ func timeTrack(start time.Time) {
 }
 
 func getVersion(h Host) {
-	d, err := core.NewCoreDriver(
-		h.Hostname,
+	p, err := platform.NewPlatform(
 		h.Platform,
-		base.WithAuthStrictKey(h.StrictKey),
-		base.WithAuthUsername(h.Username),
-		base.WithAuthPassword(h.Password),
-		//base.WithTransportType("standard"),
-		//base.WithSSHConfigFile("ssh_config"),
+		h.Hostname,
+		options.WithAuthNoStrictKey(),
+		options.WithAuthUsername(h.Username),
+		options.WithAuthPassword(h.Password),
+		options.WithSSHConfigFile("../inventory/ssh_config"),
 	)
-
 	if err != nil {
-		fmt.Printf("failed to create driver for %s: %+v\n\n", h.Hostname, err)
+		fmt.Printf("failed to create platform for %s: %+v\n\n", h.Hostname, err)
 		return
 	}
+
+	d, err := p.GetNetworkDriver()
+	if err != nil {
+        fmt.Printf("failed to fetch network driver for %s: %+v\n\n", h.Hostname, err)
+        return
+    }
 
 	err = d.Open()
 	if err != nil {

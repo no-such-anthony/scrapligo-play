@@ -3,8 +3,8 @@ package netconfscrapli
 import (
 	"fmt"
 	"main/play/app"
-	"github.com/scrapli/scrapligo/driver/base"
-	"github.com/scrapli/scrapligo/netconf"
+	"github.com/scrapli/scrapligo/driver/options"
+	"github.com/scrapli/scrapligo/driver/netconf"
 )
 
 type ScrapligoNetconf struct {
@@ -25,21 +25,21 @@ func (s *ScrapligoNetconf) Open(h *app.Host) (error) {
 		ncport = 830
 	}
 
-	c, err := netconf.NewNetconfDriver(
+	c, err := netconf.NewDriver(
 		h.Hostname,
-		base.WithPort(ncport),
-		base.WithAuthStrictKey(h.StrictKey),
-		base.WithAuthUsername(h.Username),
-		base.WithAuthPassword(h.Password),
+		options.WithPort(ncport),
+		options.WithAuthNoStrictKey(),
+		options.WithAuthUsername(h.Username),
+		options.WithAuthPassword(h.Password),
 	)
 
 	if err != nil {
-		return fmt.Errorf("netconf: failed to create driver: %+v", err)
+		return fmt.Errorf("netconf: failed to create driver for %s: %+v\n\n", h.Hostname, err)
 	}
 
 	err = c.Open()
 	if err != nil {
-		return fmt.Errorf("netconf: failed to open driver: %+v", err)
+		return fmt.Errorf("netconf: failed to open driver for %s: %+v\n\n", h.Hostname, err)
 	}
 
 	s.C = c

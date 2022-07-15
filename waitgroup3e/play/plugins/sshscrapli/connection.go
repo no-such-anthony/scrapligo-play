@@ -3,8 +3,8 @@ package sshscrapli
 import (
 	"fmt"
 	"main/play/app"
-	"github.com/scrapli/scrapligo/driver/base"
-	"github.com/scrapli/scrapligo/driver/core"
+	"github.com/scrapli/scrapligo/driver/options"
+	"github.com/scrapli/scrapligo/platform"
 	"github.com/scrapli/scrapligo/driver/network"
 )
 
@@ -26,21 +26,22 @@ func (s *ScrapligoSsh) Open(h *app.Host) (error) {
 		sshport = 22
 	}
 
-	c, err := core.NewCoreDriver(
-		h.Hostname,
+	p, err := platform.NewPlatform(
 		h.Platform,
-		base.WithAuthStrictKey(h.StrictKey),
-		base.WithAuthUsername(h.Username),
-		base.WithAuthPassword(h.Password),
-		base.WithPort(sshport),
-		//base.WithAuthSecondary(h.Enable),
-		//base.WithTransportType("standard"),
-		//base.WithSSHConfigFile("ssh_config"),
+		h.Hostname,
+		options.WithAuthNoStrictKey(),
+		options.WithAuthUsername(h.Username),
+		options.WithAuthPassword(h.Password),
+		options.WithSSHConfigFile("../inventory/ssh_config"),
 	)
-
 	if err != nil {
-		return fmt.Errorf("ssh: failed to create driver: %+v", err)
+		return fmt.Errorf("ssh: failed to create platform for %s: %+v\n\n", h.Hostname, err)
 	}
+
+	c, err := p.GetNetworkDriver()
+	if err != nil {
+        return fmt.Errorf("ssh: failed to fetch network driver for %s: %+v\n\n", h.Hostname, err)
+    }
 
 	err = c.Open()
 	if err != nil {

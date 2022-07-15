@@ -8,6 +8,8 @@ This uses sub-tests so I think you need at least Go1.17.  The first level is the
 
 It needs a better way of packaging, but this is primarily a proof of concept only.
 
+And why did I suddenly needed to use export CGO_ENABLED=0?
+
 ```
 PS D:\Users\user\Documents\workspace\scrapligo-play\tester1> go test . -count=1 -v -name 192.168.204.104 -name no.suchdomain -task version -task bgp
 2022/03/28 20:10:43 Names: 192.168.204.104, no.suchdomain

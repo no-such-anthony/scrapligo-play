@@ -4,8 +4,8 @@ package main
 import (
 	"fmt"
 	"time"
-	"github.com/scrapli/scrapligo/driver/base"
-	"github.com/scrapli/scrapligo/driver/core"
+	"github.com/scrapli/scrapligo/driver/options"
+	"github.com/scrapli/scrapligo/platform"
 	"github.com/scrapli/scrapligo/driver/network"
 	"errors"
 	"regexp"
@@ -334,21 +334,24 @@ func F_exclude(i Hosts, loc string, includes []string) Hosts {
 
 func getConnection(h Host) (*network.Driver, error) {
 
-	c, err := core.NewCoreDriver(
-		h.Hostname,
+	p, err := platform.NewPlatform(
 		h.Platform,
-		base.WithAuthStrictKey(h.StrictKey),
-		base.WithAuthUsername(h.Username),
-		base.WithAuthPassword(h.Password),
-		//base.WithAuthSecondary(h.Enable),
-		//base.WithTransportType("standard"),
-		//base.WithSSHConfigFile("ssh_config"),
+		h.Hostname,
+		options.WithAuthNoStrictKey(),
+		options.WithAuthUsername(h.Username),
+		options.WithAuthPassword(h.Password),
+		options.WithSSHConfigFile("../inventory/ssh_config"),
 	)
-
 	if err != nil {
-		msg := fmt.Sprintf("failed to create driver for %s: %+v", h.Hostname, err)
-		return c, errors.New(msg)
+		msg := fmt.Sprintf("failed to create platform for %s: %+v\n\n", h.Hostname, err)
+		return nil,errors.New(msg)
 	}
+
+	c, err := p.GetNetworkDriver()
+	if err != nil {
+        msg := fmt.Sprintf("failed to fetch network driver for %s: %+v\n\n", h.Hostname, err)
+        return nil,errors.New(msg)
+    }
 
 	err = c.Open()
 	if err != nil {

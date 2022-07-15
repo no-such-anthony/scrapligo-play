@@ -4,8 +4,8 @@ package main
 import (
 	"fmt"
 	"time"
-	"github.com/scrapli/scrapligo/driver/base"
-	"github.com/scrapli/scrapligo/driver/core"
+	"github.com/scrapli/scrapligo/driver/options"
+	"github.com/scrapli/scrapligo/platform"
 )
 
 type Host struct {
@@ -27,20 +27,24 @@ func getVersion(h Host) map[string]interface{} {
 	result := make(map[string]interface{})
 	result["name"] = h.Name
 
-	d, err := core.NewCoreDriver(
-		h.Hostname,
+	p, err := platform.NewPlatform(
 		h.Platform,
-		base.WithAuthStrictKey(h.StrictKey),
-		base.WithAuthUsername(h.Username),
-		base.WithAuthPassword(h.Password),
-		//base.WithTransportType("standard"),
-		//base.WithSSHConfigFile("ssh_config"),
+		h.Hostname,
+		options.WithAuthNoStrictKey(),
+		options.WithAuthUsername(h.Username),
+		options.WithAuthPassword(h.Password),
+		options.WithSSHConfigFile("../inventory/ssh_config"),
 	)
-
 	if err != nil {
-		result["error"] = fmt.Sprintf("failed to create driver for %s: %+v", h.Hostname, err)
+		result["error"] = fmt.Sprintf("failed to create platform for %s: %+v\n\n", h.Hostname, err)
 		return result
 	}
+
+	d, err := p.GetNetworkDriver()
+	if err != nil {
+        result["error"] = fmt.Sprintf("failed to fetch network driver for %s: %+v\n\n", h.Hostname, err)
+        return result
+    }
 
 	err = d.Open()
 	if err != nil {
