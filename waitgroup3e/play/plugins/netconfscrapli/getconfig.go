@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"main/play/app"
 	"github.com/scrapli/scrapligo/driver/netconf"
-	"github.com/scrapli/scrapligo/util"
-	//"github.com/scrapli/scrapligo/driver/opoptions"
+	"github.com/scrapli/scrapligo/driver/opoptions"
 	"github.com/go-xmlfmt/xmlfmt"
 )
 
@@ -36,7 +35,7 @@ func (s *GetConfig) Run(h *app.Host, c *netconf.Driver, prev_results []map[strin
 		s.Type = "running"
 	}
 	
-	r, err := c.GetConfig(s.Type, WithFilter(s.Filter))
+	r, err := c.GetConfig(s.Type, opoptions.WithFilter(s.Filter))
 	if err != nil {
 		return res, fmt.Errorf("failed to get config; error: %+v", err)
 	}
@@ -46,19 +45,4 @@ func (s *GetConfig) Run(h *app.Host, c *netconf.Driver, prev_results []map[strin
 	// === Required
 	return res, nil
 
-}
-
-// Temporary hack...WithFilter adds filter to NETCONF operations...or maybe I could have just used c.Get(<filter>)?
-func WithFilter(s string) util.Option {
-	return func(o interface{}) error {
-		c, ok := o.(*netconf.OperationOptions)
-
-		if ok {
-			c.Filter = s
-
-			return nil
-		}
-
-		return util.ErrIgnoredOption
-	}
 }

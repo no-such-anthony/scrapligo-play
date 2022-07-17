@@ -7,7 +7,7 @@ require (
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20220206211657-0a94163c4677
 	github.com/google/goexpect v0.0.0-20210430020637-ab937bf7fd6f
 	github.com/networklore/netrasp v0.0.0-20210423055811-2a6631e4fc36
-	github.com/scrapli/scrapligo v1.1.0
+	github.com/scrapli/scrapligo v1.1.2-0.20220716232354-4034cc698ad3
 	github.com/sirikothe/gotextfsm v1.0.1-0.20200816110946-6aa2cfd355e4
 	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898
 	gopkg.in/yaml.v2 v2.4.0
