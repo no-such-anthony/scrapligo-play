@@ -18,7 +18,7 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
   - basic inventory
   - filter
   - simple package structure (after many iterations this now looks like gornir)
-  - connection plugins
+  - connection interfaces
     - scrapligo (ssh/netconf)
     - gomiko
     - netrasp
