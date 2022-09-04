@@ -20,13 +20,15 @@ func main() {
 	command := "show version"
 
 	task1 := sshgoexpect.SendCommand{
-		Name: "a show version in goexpect/ssh",
+		TaskBase: app.TaskBase{
+			Name: "a show version in goexpect/ssh",
+			//Exclude: map[string][]string{"name": []string{"sandbox"}},
+		},
 		Command: command,
-		//Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask1 := sshgoexpect.Wrap{Tasker: &task1}
+	wtask1 := sshgoexpect.Wrap{&task1}
 
-	t := []app.Wrapper{&wtask1}
+	t := []app.Play{&wtask1}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)

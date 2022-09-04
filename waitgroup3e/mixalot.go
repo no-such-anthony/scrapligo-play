@@ -34,22 +34,26 @@ func main() {
 	textfsm := "../textfsm_templates/cisco_iosxe_show_version.textfsm"
 
 	task1 := sshscrapli.SendCommand{
-		Name: "my first show version",
+		TaskBase: app.TaskBase{
+			Name: "my first show version",
+			Include: map[string][]string{"hostname": []string{"192.168.204.101","no.suchdomain"},
+									 "model": []string{"C3560CX"}},
+			Exclude: map[string][]string{"name": []string{"sandbox"}},
+		},
 		Command: command,
 		Textfsm: textfsm,
-		Include: map[string][]string{"hostname": []string{"192.168.204.101","no.suchdomain"},
-									 "model": []string{"C3560CX"}},
-		Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask1 := sshscrapli.Wrap{Tasker: &task1}
+	wtask1 := sshscrapli.Wrap{&task1}
 
 	task2 := sshscrapli.SendCommand{
-		Name: "my second show version",
+		TaskBase: app.TaskBase{
+			Name: "my second show version",
+			Exclude: map[string][]string{"name": []string{"192.168.204.101"}},
+		},
 		Command: command,
 		Textfsm: textfsm,
-		Exclude: map[string][]string{"name": []string{"192.168.204.101"}},
 	}
-	wtask2 := sshscrapli.Wrap{Tasker: &task2}
+	wtask2 := sshscrapli.Wrap{&task2}
 
 	ncFilter := "" +
 	"<interfaces xmlns=\"urn:ietf:params:xml:ns:yang:ietf-interfaces\">\n" +
@@ -61,45 +65,55 @@ func main() {
 	"</interfaces>"
 
 	task3 := netconfscrapli.GetConfig{
-		Name: "my netconf show run",
+		TaskBase: app.TaskBase{
+			Name: "my netconf show run",
+			Include: map[string][]string{"name": []string{"sandbox","r1"}},
+		},
 		Type: "running",
 		Filter: ncFilter,
-		Include: map[string][]string{"name": []string{"sandbox","r1"}},
 	}
-	wtask3 := netconfscrapli.Wrap{Tasker: &task3}
+	wtask3 := netconfscrapli.Wrap{&task3}
 
 	task4 := other.TaskTest{
-		Name: "my default wrappered task test",
+		TaskBase: app.TaskBase{
+			Name: "my default wrappered task test",
+		},
 		Kwargs: map[string]interface{} { "hello": "defaultwrapped"},
 	}
 	//tasks.Wrap is default wrapper for tasks not requiring one of the pre-configured connections
 	//but nothing stopping you from adding to your task.
-	wtask4 := app.Wrap{Tasker: &task4}
+	wtask4 := app.Wrap{&task4}
 
 	task5 := sshgomiko.SendCommand{
-		Name: "my gomiko show version",
+		TaskBase: app.TaskBase{
+			Name: "my gomiko show version",
+			Exclude: map[string][]string{"name": []string{"192.168.204.101"}},
+		},
 		Command: command,
 		Textfsm: textfsm,
-		Exclude: map[string][]string{"name": []string{"192.168.204.101"}},
 	}
-	wtask5 := sshgomiko.Wrap{Tasker: &task5}
+	wtask5 := sshgomiko.Wrap{&task5}
 
 	task6 := other.TestRestConf{
-		Name: "my restconf test",
+		TaskBase: app.TaskBase{
+			Name: "my restconf test",
+			Include: map[string][]string{"name": []string{"sandbox"}},
+		},
 		Filter: "interface",
-		Include: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask6 := app.Wrap{Tasker: &task6}
+	wtask6 := app.Wrap{&task6}
 
 	task7 := sshnetrasp.SendCommand{
-		Name: "my first show version in netrasp",
+		TaskBase: app.TaskBase{
+			Name: "my first show version in netrasp",
+			Exclude: map[string][]string{"name": []string{"sandbox"}},
+		},
 		Command: command,
 		Textfsm: textfsm,
-		Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask7 := sshnetrasp.Wrap{Tasker: &task7}
+	wtask7 := sshnetrasp.Wrap{&task7}
 
-	t := []app.Wrapper{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5, &wtask6, &wtask7}
+	t := []app.Play{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5, &wtask6, &wtask7}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)

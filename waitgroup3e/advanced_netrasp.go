@@ -27,14 +27,16 @@ func main() {
 
 	//notice the use of local sendcommand attached to the wrapper
 	task1 := sendCommand{
-		Name: "a show version in netrasp",
+		TaskBase: app.TaskBase{
+			Name: "a show version in netrasp",
+			//Exclude: map[string][]string{"name": []string{"sandbox"}},
+		},
 		Command: command,
 		Textfsm: textfsm,
-		//Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask1 := sshnetrasp.Wrap{Tasker: &task1}
+	wtask1 := sshnetrasp.Wrap{&task1}
 
-	t := []app.Wrapper{&wtask1}
+	t := []app.Play{&wtask1}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)
@@ -60,19 +62,13 @@ func timeTrack(start time.Time) {
 // this example is a creating a new sendcommand local to this file
 
 type sendCommand struct {
-	Name string
+	app.TaskBase
 	Command string
 	Textfsm string
-	Include map[string][]string
-	Exclude map[string][]string
 }
 
-func (s *sendCommand) Task() app.TaskBase {
-	return app.TaskBase{
-		Name: s.Name,
-		Include: s.Include,
-		Exclude: s.Exclude,
-	}
+func (s *sendCommand) Info() app.TaskBase {
+	return s.TaskBase
 }
 
 func (s *sendCommand) Run(h *app.Host, c netrasp.Platform, prev_results []map[string]interface{}) (map[string]interface{}, error) {

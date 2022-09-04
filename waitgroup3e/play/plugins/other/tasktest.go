@@ -6,18 +6,12 @@ import (
 )
 
 type TaskTest struct {
-	Name string
+	app.TaskBase
 	Kwargs map[string]interface{}
-	Include map[string][]string
-	Exclude map[string][]string
 }
 
-func (s *TaskTest) Task() app.TaskBase {
-	return app.TaskBase{
-		Name: s.Name,
-		Include: s.Include,
-		Exclude: s.Exclude,
-	}
+func (s *TaskTest) Info() app.TaskBase {
+	return s.TaskBase
 }
 
 func (s *TaskTest) Run(h *app.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {

@@ -6,19 +6,19 @@ import (
 	"github.com/scrapli/scrapligo/driver/network"
 )
 
-type Tasker interface {
+type Task interface {
 	Run(*app.Host, *network.Driver, []map[string]interface{}) (map[string]interface{}, error)
-	Task() app.TaskBase
+	Info() app.TaskBase
 }
 
 type Wrap struct {
-	Tasker Tasker
+	Task
 }
 
-func (r *Wrap) Run(h *app.Host, prev_res []map[string]interface{}) (res map[string]interface{}, wrapErr error) {
+func (r *Wrap) Start(h *app.Host, prev_res []map[string]interface{}) (res map[string]interface{}, wrapErr error) {
 
 	res = make(map[string]interface{})
-	task := r.Tasker.Task()
+	task := r.Task.Info()
 	res["task"] = task.Name
 	wrapErr = nil
 
@@ -53,7 +53,7 @@ func (r *Wrap) Run(h *app.Host, prev_res []map[string]interface{}) (res map[stri
 	}
 
 	c := conn.(*ScrapligoSsh).C
-	res, err = r.Tasker.Run(h, c, prev_res)
+	res, err = r.Task.Run(h, c, prev_res)
 	if err != nil {
 		return res, &app.TaskError{task.Name, h.Name, err}
 	}

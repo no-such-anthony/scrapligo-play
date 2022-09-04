@@ -7,14 +7,14 @@ import (
 )
 
 
-func runTasks(h *Host, t []Wrapper) []map[string]interface{} {
+func runTasks(h *Host, t []Play) []map[string]interface{} {
 
 	host_results := []map[string]interface{}{}
 
 	// task loop
 	for _, task := range t {
 
-		res, err := task.Run(h, host_results)
+		res, err := task.Start(h, host_results)
 		// don't continue on error
 		if err != nil {
 			fmt.Println("error:", strings.TrimSuffix(err.Error(), "\n"))
@@ -37,7 +37,7 @@ func runTasks(h *Host, t []Wrapper) []map[string]interface{} {
 }
 
 
-func Runner(hosts Hosts, t []Wrapper) (map[string]interface{})  {
+func Runner(hosts Hosts, t []Play) (map[string]interface{})  {
 
 	var wg sync.WaitGroup
 

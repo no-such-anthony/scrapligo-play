@@ -8,19 +8,13 @@ import (
 
 
 type SendCommand struct {
-	Name string
+	app.TaskBase
 	Command string
 	Textfsm string
-	Include map[string][]string
-	Exclude map[string][]string
 }
 
-func (s *SendCommand) Task() app.TaskBase {
-	return app.TaskBase{
-		Name: s.Name,
-		Include: s.Include,
-		Exclude: s.Exclude,
-	}
+func (s *SendCommand) Info() app.TaskBase {
+	return s.TaskBase
 }
 
 func (s *SendCommand) Run(h *app.Host, c *network.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {

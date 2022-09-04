@@ -7,8 +7,17 @@ type TaskBase struct {
 	Exclude map[string][]string
 }
 
-type Wrapper interface {
-	Run(*Host, []map[string]interface{}) (map[string]interface{}, error)
+func (s *TaskBase) Task() TaskBase {
+	return TaskBase{
+		Name: s.Name,
+		Include: s.Include,
+		Exclude: s.Exclude,
+	}
+}
+
+
+type Play interface {
+	Start(*Host, []map[string]interface{}) (map[string]interface{}, error)
 }
 
 type TaskError struct {

@@ -9,19 +9,13 @@ import (
 )
 
 type GetConfig struct {
-	Name string
+	app.TaskBase
 	Type string  	// running, startup, candidate...
 	Filter string	// netconf filter
-	Include map[string][]string
-	Exclude map[string][]string
 }
 
-func (s *GetConfig) Task() app.TaskBase {
-	return app.TaskBase{
-		Name: s.Name,
-		Include: s.Include,
-		Exclude: s.Exclude,
-	}
+func (s *GetConfig) Info() app.TaskBase {
+	return s.TaskBase
 }
 
 func (s *GetConfig) Run(h *app.Host, c *netconf.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {

@@ -20,15 +20,17 @@ func main() {
 	command := "show version"
 	textfsm := "../textfsm_templates/cisco_iosxe_show_version.textfsm"
 
-	task1 := sshnetrasp.SendCommand{
-		Name: "a show version in netrasp",
+	task1 := sshnetrasp.SendCommand{  
+		TaskBase: app.TaskBase{
+			Name: "a show version in netrasp",
+			//Exclude: map[string][]string{"name": []string{"sandbox"}},
+		},
 		Command: command,
 		Textfsm: textfsm,
-		//Exclude: map[string][]string{"name": []string{"sandbox"}},
 	}
-	wtask1 := sshnetrasp.Wrap{Tasker: &task1}
+	wtask1 := sshnetrasp.Wrap{&task1}
 
-	t := []app.Wrapper{&wtask1}
+	t := []app.Play{&wtask1}
 	//fmt.Printf("%+v\n", t)
 
 	results := app.Runner(hosts, t)

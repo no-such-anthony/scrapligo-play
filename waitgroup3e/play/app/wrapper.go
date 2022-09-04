@@ -4,19 +4,19 @@ import (
 	"fmt"
 )
 
-type Tasker interface {
+type Task interface {
 	Run(*Host, []map[string]interface{}) (map[string]interface{}, error)
-	Task() TaskBase
+	Info() TaskBase
 }
 
 type Wrap struct {
-	Tasker Tasker
+	Task
 }
 
-func (r *Wrap) Run(h *Host, prev_res []map[string]interface{}) (res map[string]interface{}, wrapErr error) {
+func (r *Wrap) Start(h *Host, prev_res []map[string]interface{}) (res map[string]interface{}, wrapErr error) {
 
 	res = make(map[string]interface{})
-	task := r.Tasker.Task()
+	task := r.Task.Info()
 	res["task"] = task.Name
 	wrapErr = nil
 
@@ -43,7 +43,7 @@ func (r *Wrap) Run(h *Host, prev_res []map[string]interface{}) (res map[string]i
 		}
 	}()
 
-	res, err := r.Tasker.Run(h, prev_res)
+	res, err := r.Task.Run(h, prev_res)
 	if err != nil {
 		return res, &TaskError{task.Name, h.Name, err}
 	}

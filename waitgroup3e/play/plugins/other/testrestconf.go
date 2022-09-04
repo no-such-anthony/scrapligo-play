@@ -9,18 +9,12 @@ import (
 )
 
 type TestRestConf struct {
-	Name string
+	app.TaskBase
 	Filter string	// restconf filter
-	Include map[string][]string
-	Exclude map[string][]string
 }
 
-func (s *TestRestConf) Task() app.TaskBase {
-	return app.TaskBase{
-		Name: s.Name,
-		Include: s.Include,
-		Exclude: s.Exclude,
-	}
+func (s *TestRestConf) Info() app.TaskBase {
+	return s.TaskBase
 }
 
 func (s *TestRestConf) Run(h *app.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
