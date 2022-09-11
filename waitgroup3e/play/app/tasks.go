@@ -7,7 +7,7 @@ type TaskBase struct {
 	Exclude map[string][]string
 }
 
-func (s *TaskBase) Task() TaskBase {
+func (s *TaskBase) Info() TaskBase {
 	return TaskBase{
 		Name: s.Name,
 		Include: s.Include,

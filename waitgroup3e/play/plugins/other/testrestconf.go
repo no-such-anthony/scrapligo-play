@@ -13,9 +13,9 @@ type TestRestConf struct {
 	Filter string	// restconf filter
 }
 
-func (s *TestRestConf) Info() app.TaskBase {
-	return s.TaskBase
-}
+//func (s *TestRestConf) Info() app.TaskBase {
+//	return s.TaskBase
+//}
 
 func (s *TestRestConf) Run(h *app.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 

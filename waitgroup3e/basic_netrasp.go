@@ -28,7 +28,7 @@ func main() {
 		Command: command,
 		Textfsm: textfsm,
 	}
-	wtask1 := sshnetrasp.Wrap{&task1}
+	wtask1 := sshnetrasp.Wrap{Task: &task1}
 
 	t := []app.Play{&wtask1}
 	//fmt.Printf("%+v\n", t)

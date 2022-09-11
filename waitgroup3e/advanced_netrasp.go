@@ -34,7 +34,7 @@ func main() {
 		Command: command,
 		Textfsm: textfsm,
 	}
-	wtask1 := sshnetrasp.Wrap{&task1}
+	wtask1 := sshnetrasp.Wrap{Task: &task1}
 
 	t := []app.Play{&wtask1}
 	//fmt.Printf("%+v\n", t)
@@ -67,9 +67,9 @@ type sendCommand struct {
 	Textfsm string
 }
 
-func (s *sendCommand) Info() app.TaskBase {
-	return s.TaskBase
-}
+//func (s *sendCommand) Info() app.TaskBase {
+//	return s.TaskBase
+//}
 
 func (s *sendCommand) Run(h *app.Host, c netrasp.Platform, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 

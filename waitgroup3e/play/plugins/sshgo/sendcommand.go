@@ -13,9 +13,9 @@ type SendCommand struct {
 	Command string
 }
 
-func (s *SendCommand) Info() app.TaskBase {
-	return s.TaskBase
-}
+//func (s *SendCommand) Info() app.TaskBase {
+//	return s.TaskBase
+//}
 
 func (s *SendCommand) Run(h *app.Host, c *ssh.Client, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 

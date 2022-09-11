@@ -15,9 +15,9 @@ type SendCommand struct {
 	Textfsm string
 }
 
-func (s *SendCommand) Info() app.TaskBase {
-	return s.TaskBase
-}
+//func (s *SendCommand) Info() app.TaskBase {
+//	return s.TaskBase
+//}
 
 func (s *SendCommand) Run(h *app.Host, c types.Device, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 

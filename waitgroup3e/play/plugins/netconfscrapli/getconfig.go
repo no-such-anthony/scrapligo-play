@@ -14,9 +14,9 @@ type GetConfig struct {
 	Filter string	// netconf filter
 }
 
-func (s *GetConfig) Info() app.TaskBase {
-	return s.TaskBase
-}
+//func (s *GetConfig) Info() app.TaskBase {
+//	return s.TaskBase
+//}
 
 func (s *GetConfig) Run(h *app.Host, c *netconf.Driver, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 

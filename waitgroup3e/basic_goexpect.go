@@ -26,7 +26,7 @@ func main() {
 		},
 		Command: command,
 	}
-	wtask1 := sshgoexpect.Wrap{&task1}
+	wtask1 := sshgoexpect.Wrap{Task: &task1}
 
 	t := []app.Play{&wtask1}
 	//fmt.Printf("%+v\n", t)

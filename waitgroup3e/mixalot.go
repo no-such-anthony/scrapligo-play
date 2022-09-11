@@ -43,7 +43,7 @@ func main() {
 		Command: command,
 		Textfsm: textfsm,
 	}
-	wtask1 := sshscrapli.Wrap{&task1}
+	wtask1 := sshscrapli.Wrap{Task: &task1}
 
 	task2 := sshscrapli.SendCommand{
 		TaskBase: app.TaskBase{
@@ -53,7 +53,7 @@ func main() {
 		Command: command,
 		Textfsm: textfsm,
 	}
-	wtask2 := sshscrapli.Wrap{&task2}
+	wtask2 := sshscrapli.Wrap{Task: &task2}
 
 	ncFilter := "" +
 	"<interfaces xmlns=\"urn:ietf:params:xml:ns:yang:ietf-interfaces\">\n" +
@@ -72,7 +72,7 @@ func main() {
 		Type: "running",
 		Filter: ncFilter,
 	}
-	wtask3 := netconfscrapli.Wrap{&task3}
+	wtask3 := netconfscrapli.Wrap{Task: &task3}
 
 	task4 := other.TaskTest{
 		TaskBase: app.TaskBase{
@@ -82,7 +82,7 @@ func main() {
 	}
 	//tasks.Wrap is default wrapper for tasks not requiring one of the pre-configured connections
 	//but nothing stopping you from adding to your task.
-	wtask4 := app.Wrap{&task4}
+	wtask4 := app.Wrap{Task: &task4}
 
 	task5 := sshgomiko.SendCommand{
 		TaskBase: app.TaskBase{
@@ -92,7 +92,7 @@ func main() {
 		Command: command,
 		Textfsm: textfsm,
 	}
-	wtask5 := sshgomiko.Wrap{&task5}
+	wtask5 := sshgomiko.Wrap{Task: &task5}
 
 	task6 := other.TestRestConf{
 		TaskBase: app.TaskBase{
@@ -101,7 +101,7 @@ func main() {
 		},
 		Filter: "interface",
 	}
-	wtask6 := app.Wrap{&task6}
+	wtask6 := app.Wrap{Task: &task6}
 
 	task7 := sshnetrasp.SendCommand{
 		TaskBase: app.TaskBase{
@@ -111,7 +111,7 @@ func main() {
 		Command: command,
 		Textfsm: textfsm,
 	}
-	wtask7 := sshnetrasp.Wrap{&task7}
+	wtask7 := sshnetrasp.Wrap{Task: &task7}
 
 	t := []app.Play{&wtask1, &wtask2, &wtask3, &wtask4, &wtask5, &wtask6, &wtask7}
 	//fmt.Printf("%+v\n", t)

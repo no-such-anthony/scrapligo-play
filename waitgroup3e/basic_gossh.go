@@ -27,7 +27,7 @@ func main() {
 		Command: command,
 		
 	}
-	wtask1 := sshgo.Wrap{&task1}
+	wtask1 := sshgo.Wrap{Task: &task1}
 
 	t := []app.Play{&wtask1}
 	//fmt.Printf("%+v\n", t)

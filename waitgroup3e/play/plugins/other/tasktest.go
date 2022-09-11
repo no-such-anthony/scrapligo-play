@@ -10,9 +10,9 @@ type TaskTest struct {
 	Kwargs map[string]interface{}
 }
 
-func (s *TaskTest) Info() app.TaskBase {
-	return s.TaskBase
-}
+//func (s *TaskTest) Info() app.TaskBase {
+//	return s.TaskBase
+//}
 
 func (s *TaskTest) Run(h *app.Host, prev_results []map[string]interface{}) (map[string]interface{}, error) {
 
