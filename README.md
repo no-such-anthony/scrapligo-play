@@ -35,6 +35,7 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 - workerpool2b - add yaml inventory, filter, and write config to file.
 - workerpool3 - waitgroup/(in)channel workerpool combo, storing results in the host pointer
 - tester1 - Scrapligo and "go test" for testing operational state of the network
+- template1 - some templates, some yaml, and some tcl via scrapligo thrown in
 
 Note: gomiko for waitgroup3e
 "git mod tidy" or "go get -u" without the @master didn't get latest, you may need to use
