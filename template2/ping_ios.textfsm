@@ -1,0 +1,8 @@
+Value Required IP (\S+)
+Value SUCCESS (\d+)
+Value RTT (.*)
+					
+Start
+ ^Sending .* Echos to ${IP},
+ ^Success rate is ${SUCCESS} percent .*= ${RTT} -> Record
+ ^Success rate is ${SUCCESS} percent .* -> Record
