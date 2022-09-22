@@ -1,0 +1,10 @@
+---
+VLAN:
+  - number: 10
+    name: TEN
+  - number: 20
+    name: TWENTY
+  - number: 30
+    name: THIRTY
+  - number: 40
+    name: FORTY

@@ -1,0 +1,12 @@
+{{ if .VLAN -}}
+no vlan 2-1001
+no vlan 1006-4094
+{{ range .VLAN -}}
+{{ if .Number -}}
+vlan {{ .Number }}
+{{ if .Name -}}
+name {{ .Name }}
+{{ end -}}
+{{ end -}}
+{{ end -}}
+{{ end -}}
