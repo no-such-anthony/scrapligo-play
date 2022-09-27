@@ -37,6 +37,7 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 - tester1 - Scrapligo and "go test" for testing operational state of the network
 - template1 - templates, yaml, and tcl to create file on disk via scrapligo
 - template2 - tcl ping created from template, plus textfsm and an attempt at tabwriter
+- database1 - sqlite - create.go, gather.go, query.go example.
 
 Note: gomiko for waitgroup3e
 "git mod tidy" or "go get -u" without the @master didn't get latest, you may need to use
