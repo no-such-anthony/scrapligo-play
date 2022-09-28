@@ -42,3 +42,6 @@ Based around example code found at https://github.com/PacktPublishing/Network-Au
 Note: gomiko for waitgroup3e
 "git mod tidy" or "go get -u" without the @master didn't get latest, you may need to use
 go get -u github.com/Ali-aqrabawi/gomiko/pkg@master
+
+Handy Links
+https://yourbasic.org/golang/gotcha-data-race-closure/

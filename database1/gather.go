@@ -51,11 +51,10 @@ func theGathering(hosts Hosts, db *sql.DB) {
 	//Note: Combining Waitgroup with a channel to restrict number of goroutines.
 	wg.Add(len(hosts))
 	for _, host := range hosts {
-		host := host
 		guard <- true
 		go func(h Host) {
 			defer wg.Done()
-			getStuff(host, db)
+			getStuff(&h, db)
 			<-guard
 		}(*host)
 	}
