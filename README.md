@@ -2,7 +2,7 @@
 
 What better way to learn Go than with practical examples of network automation with scrapligo.
 
-Based around example code found at https://github.com/PacktPublishing/Network-Automation-with-Go
+Initially based around example code found at https://github.com/PacktPublishing/Network-Automation-with-Go and has grown from there
 
 - waitgroup1 - Waitgroup with nothing to limit number of goroutines.
 - waitgroup2 - Waitgroup with chunks of data to restrict the number of goroutines.
