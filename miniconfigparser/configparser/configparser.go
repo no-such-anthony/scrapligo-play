@@ -85,6 +85,14 @@ func Scan(f string) CP {
 			parent.Children = append(parent.Children, node)
 		} else if len(indent) > 0 && len(indent) < len(prevIndent)  {
 			node.Parents = node.Parents[:len(node.Parents)-1]
+
+			for p := len(node.Parents)-1; p>=0; p-- {
+				parent := node.Parents[p]
+				if len(parent.Indent) >= len(indent) {
+					node.Parents = node.Parents[:len(node.Parents)-1]
+				}
+			}
+
 			parent := node.Parents[len(node.Parents)-1]
 			parent.Children = append(parent.Children, node)
 		}
