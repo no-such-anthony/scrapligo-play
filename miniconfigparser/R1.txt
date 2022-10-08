@@ -1,0 +1,169 @@
+Building configuration...
+
+Current configuration : 2115 bytes
+!
+upgrade fpd auto
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 blah
+!
+aaa new-model
+!
+!
+!
+aaa authentication login default local
+aaa authentication enable default enable
+aaa authorization exec default local
+!
+!
+!
+!
+!
+aaa session-id common
+no ip icmp rate-limit unreachable
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name gns.lab
+ip multicast-routing
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username fred privilege 15 password 0 bedrock
+username barney password 0 bedrock
+!
+redundancy
+!
+!
+ip tcp synwait-time 5
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.10.0.11 255.255.255.255
+ ip pim sparse-mode
+!
+interface FastEthernet0/0
+ ip address 10.10.12.1 255.255.255.0
+ ip pim sparse-mode
+ duplex half
+!
+interface FastEthernet1/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/1
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/1
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet3/0
+ ip address 192.168.204.101 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface FastEthernet3/1
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+router ospf 1
+ router-id 10.10.0.11
+ passive-interface default
+ no passive-interface FastEthernet0/0
+ network 0.0.0.0 255.255.255.255 area 0
+!
+ip forward-protocol nd
+no ip http server
+no ip http secure-server
+!
+!
+ip pim rp-address 10.10.0.22
+!
+no cdp log mismatch duplex
+!
+!
+!
+!
+control-plane
+!
+!
+!
+mgcp profile default
+!
+!
+!
+gatekeeper
+ shutdown
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ transport input all
+!
+!
+banner motd ^C
+================================================================================
+# #
+# This ia a banner #
+# #
+================================================================================
+^C
+!
+end
