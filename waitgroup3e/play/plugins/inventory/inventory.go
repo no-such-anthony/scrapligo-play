@@ -32,7 +32,7 @@ func GetHostsByYAML() app.Hosts {
 				v.StrictKey = false
 				break
 			} else if g == "devnet" {
-				v.Username = "developer"
+				v.Username = "admin"
 				v.Password = "C1sco12345"
 				v.Platform = "cisco_iosxe"
 				v.StrictKey = false
